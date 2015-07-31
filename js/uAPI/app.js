@@ -7,56 +7,33 @@ function microtime(get_as_float) {
     return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
 }
 
-function http_build_query(formdata, numeric_prefix, arg_separator) {
-    var value, key, tmp = [],
-        that = this;
+function http_build_query( formdata, numeric_prefix, arg_separator ) {	// Generate URL-encoded query string
+    var key, use_val, use_key, i = 0, tmp_arr = [];
 
-    var _http_build_query_helper = function(key, val, arg_separator) {
-        var k, tmp = [];
-        if (val === true) {
-            val = '1';
-        } else if (val === false) {
-            val = '0';
-        }
-        if (val != null) {
-            if (typeof val === 'object') {
-                for (k in val) {
-                    if (val[k] != null) {
-                        tmp.push(_http_build_query_helper(key + '[' + k + ']', val[k], arg_separator));
-                    }
-                }
-                return tmp.join(arg_separator);
-            } else if (typeof val !== 'function') {
-                return that.urlencode(key) + '=' + that.urlencode(val);
-            } else {
-                throw new Error('There was an error processing for http_build_query().');
-            }
-        } else {
-            return '';
-        }
-    };
-
-    if (!arg_separator) {
+    if(!arg_separator){
         arg_separator = '&';
     }
-    for (key in formdata) {
-        value = formdata[key];
-        if (numeric_prefix && !isNaN(key)) {
-            key = String(numeric_prefix) + key;
+
+    for(key in formdata){
+        use_key = escape(key);
+        use_val = escape((formdata[key].toString()));
+        use_val = use_val.replace(/%20/g, '+');
+
+        if(numeric_prefix && !isNaN(key)){
+            use_key = numeric_prefix + i;
         }
-        var query = _http_build_query_helper(key, value, arg_separator);
-        if (query !== '') {
-            tmp.push(query);
-        }
+        tmp_arr[i] = use_key + '=' + use_val;
+        i++;
     }
 
-    return tmp.join(arg_separator);
+    return tmp_arr.join(arg_separator);
 }
+
 
 var uAPIModule = {
     // uAPIModule info
-    oauthNonce: CryptoJS.MD5(microtime() + Math.floor(Math.random() * 999999999)),
-    timestamp: Date.now(),
+    oauthNonce: CryptoJS.MD5(microtime().toString() + Math.floor(Math.random() * 999999999).toString()),
+    timestamp: new Date() / 1000,
     sigMethod: 'HMAC-SHA1',
     oauthVersion: '1.0',
 
@@ -67,13 +44,32 @@ var uAPIModule = {
     oauthTokenSecret: 'yRylogtLxZ4a0.gSdGRhRhn443ZVH422cqEVuGTx',
     mainUrl: 'http://alphatest-6347.ucoz.ru/uapi',
 
+    init: function() {
+        var me = this;
+        me.addListeners();
+    },
+
+    addListeners: function() {
+        var me = this;
+        $(document)
+            .on('click', '.js-uapi-request', function () {
+                // uAPIModule user app info
+                var parametrs = {
+                    oauth_consumer_key: me.consumerKey,
+                    oauth_nonce: me.oauthNonce,
+                    oauth_signature_method: me.sigMethod,
+                    oauth_timestamp: me.timestamp,
+                    oauth_token: me.oauthToken,
+                    oauth_version: me.oauthVersion,
+                };
+                me.request('/users/', 'GET', parametrs);
+            });
+    },
+
     // Request
     request: function(requestUrl, method, parametrs) {
         if (method === undefined) {
             method = 'GET';
-        }
-        if (parametrs === undefined) {
-            parametrs = '';
         }
 
         var me = this,
@@ -87,16 +83,26 @@ var uAPIModule = {
             url = '',
             urlFor = '';
 
-        parametrs = parametrs.replace('@', '');
-        basestring = method + '&' + encodeURI(requestUrl) + '&' +
-            encodeURI(http_build_query(parametrs).replace('+', '%20'));
+        //parametrs = parametrs.replace('@', '');
+        basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
+            encodeURIComponent(http_build_query(parametrs).replace('+', '%20'));
         hashKey = me.consumerSecret + '&' + me.oauthTokenSecret;
-        oauthSignature = encodeURI( $.trim(btoa( CryptoJS.HmacSHA1(basestring, hashKey) )) );
+        oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
         parametrsForUrl = http_build_query(parametrs);
-        url = requestUrl + '?oauth_signature=' + oauthSignature;
-        urlFor = requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature;
 
-        return urlFor;
+        url = (method === 'GET' || method === 'DELETE')
+            ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
+            : requestUrl + '?oauth_signature=' + oauthSignature;
+
+        $.ajax({
+            method: method,
+            url: url,
+            dataType: "json",
+            //data: parametrs2,
+        }).done(function( data ) {
+            console.log(data);
+        });
     }
-
 };
+
+uAPIModule.init();
