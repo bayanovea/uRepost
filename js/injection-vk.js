@@ -12,7 +12,7 @@ for (var i = posts.length; i-- ;) {
 	post.addEventListener('click', function () {
 		var id = this.id;
 		chrome.runtime.sendMessage({id: id}, function(response) {
-			console.log(response.msg);
+			console.log(response);
 		});
 	});
 	
