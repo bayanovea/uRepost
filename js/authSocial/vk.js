@@ -48,7 +48,7 @@ var authVK = {
 						chrome.tabs.remove(tabId);
 						chrome.tabs.onUpdated.removeListener(tabUpdateListener);
 					}
-				}
+				};
 				chrome.tabs.onUpdated.addListener(tabUpdateListener);
 			}
 		);
