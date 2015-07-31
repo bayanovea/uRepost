@@ -5,36 +5,25 @@ var getVK = {
 	db: chrome.storage.local,
 	apiUrl: 'https://api.vk.com/method/wall.getById?posts=',
 	
-	init: function () {
-		var me = this;
-		me.getAccessToken();
-	},
+	init: function () {},
 	
-	checkAccessToken: function (cb) {
-		var me = this;
-		if ( ! me.token) {
-			console.log('no token');
-			authVK.auth(function () {
-				me.getAccessToken(cb);
-			});
-			return;
-		}
-		cb();
-	},
-	
-	getAccessToken: function(cb) {
+	getAccessToken: function (cb) {
 		var me = this;
 		me.db.get('vkToken', function (data) {
-			me.token = data.vkToken;
-			cb && cb(me.token);
+			if (data.vkToken) {
+				cb && cb(data.vkToken);
+				return;
+			}
+			console.log('no token');
+			authVK.auth(cb);
 		});
 	},
 	
 	getPostById: function(id, cb) {
 		var me = this;
-		me.checkAccessToken(function () {
+		me.getAccessToken(function (token) {
 			$.ajax({
-				url: me.apiUrl + id + '&extended=1&access_token=' + me.token
+				url: me.apiUrl + id + '&extended=1&access_token=' + token
 			})
 			.done(function (res) {
 				cb(uTranspiler(res, 'vk'));
