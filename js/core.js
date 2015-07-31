@@ -69,7 +69,7 @@ var Core = (function () {
 		chrome.storage.local.get('uapi_options', function (result) {
 			var options = result['uapi_options'];
 			if (! options) return;
-			//uAPI.init(options);
+			uAPI.init(options);
 		});
 		
 		chrome.runtime.onMessage.addListener(onMessage);
