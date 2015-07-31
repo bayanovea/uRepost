@@ -17,7 +17,17 @@
 	
 	"background": {
 		"persistent": false,
-		"scripts": [ "lib/lodash.min.js", "js/getSocial/vk.js", "lib/jquery-2.1.4.min.js", "js/auth.js", "js/background.js" ]
+		"scripts": [
+			//LIB
+			"lib/jquery-2.1.4.min.js",
+			"lib/lodash.min.js",
+			"lib/async.min.js",
+			//SRC
+			"js/getSocial/vk.js", 
+			"js/auth.js",
+			
+			"js/background.js" 
+		]
 	},
 	
 	
@@ -32,8 +42,6 @@
 		"default_popup": "pages/popup.html"
 	},
 	
-	
-	
 	"content_scripts": [
 		{
 			"matches": [
@@ -41,7 +49,10 @@
 				"https://vk.com/*"
 			],
 			"css": [ "styles/css/urepost-vk.css" ],
-			"js": ["lib/jquery-2.1.4.min.js", "js/urepost-vk.js"]
+			"js": [
+				"lib/jquery-2.1.4.min.js", 
+				"js/urepost-vk.js"
+			]
 		}
 	],
 	
