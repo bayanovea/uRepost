@@ -3,6 +3,11 @@ var Core = (function () {
 	
 	function onMessage(req, sender, cb) {
 		switch (req.method) {
+			case 'vk.auth':
+				authVK.auth(function (token) {
+					cb({err: null, token: token});
+				});
+				break;
 			case 'vk.getPost':
 				var postId = req.postId.replace('post', '');
 				getVK.getPostById(postId, function (post) {
@@ -31,13 +36,11 @@ var Core = (function () {
 	function onStorage(changes, namespace) {
 		for (var key in changes) {
 			var storageChange = changes[key];
-			
 			switch (key) {
 				case "uapi_options" :
-					uAPI.init(options);
+					uAPI.init(storageChange.newValue);
 					break;
 			}
-			
 			console.log(storageChange);
 		}
 	}
