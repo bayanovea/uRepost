@@ -38,7 +38,8 @@
 				"http://vk.com/*",
 				"https://vk.com/*"
 			],
-			"css": [ "styles/css/injection-vk.css" ]
+			"css": [ "styles/css/injection-vk.css" ],
+			"js": ["js/injection-vk.js"]
 		}
 	],
 	
