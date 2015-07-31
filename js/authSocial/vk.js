@@ -1,6 +1,6 @@
 'use strict';
 
-var auth = {
+var authVK = {
 	
 	authUrl: 'https://oauth.vk.com/authorize',
 	authOpts: {
@@ -80,4 +80,4 @@ var auth = {
 	
 };
 
-auth.init();
+authVK.init();
