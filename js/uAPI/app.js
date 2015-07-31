@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * uAPI
+ * @namespace
+ */
 var uAPI = (function () {
     //Global settings
     var
@@ -38,7 +42,7 @@ var uAPI = (function () {
         _options = _.defaults(options, _options);
     };
 
-    function _request(requestUrl, method, parametrs) {
+    function _request(requestUrl, method, parametrs, cb) {
         if (!_isInit) throw new Error('not init');
 
         if (method === undefined) {
@@ -48,7 +52,7 @@ var uAPI = (function () {
         var
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
-            //parametrs2 = parametrs,
+        //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
             oauthSignature = '',
@@ -68,46 +72,76 @@ var uAPI = (function () {
             ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
             : requestUrl + '?oauth_signature=' + oauthSignature;
 
-        console.log(parametrs);
-
         $.ajax({
             method: method,
             url: url,
             data: (method === 'POST') ? parametrs : '',
-        }).done(function (data) {
-            console.log(data);
+        }).error(function (err) {
+            cb(err);
+        }).success(function (data) {
+            cb(null, data);
         });
     };
 
-    function getModules() {
+    function getModules(cb) {
         if (!_isInit) throw new Error('not init');
 
         var
             modules = {
-                blog:   { name: "Блог" },
-                board:  { name: "Доска объявлений" },
-                dir:    { name: "Каталог сайтов" },
-                publ:   { name: "Каталог статей" },
-                news:   { name: "Новости сайта" }
+                blog:   { name: "Блог", enable: 0 },
+                board:  { name: "Доска объявлений", enable: 0 },
+                dir:    { name: "Каталог сайтов", enable: 0 },
+                publ:   { name: "Каталог статей", enable: 0 },
+                news:   { name: "Новости сайта", enable: 0 }
             },
             parametrs = {
-                oauth_consumer_key: _options.consumerKey,
-                oauth_nonce: _options.oauthNonce,
+                oauth_consumer_key:     _options.consumerKey,
+                oauth_nonce:            _options.oauthNonce,
                 oauth_signature_method: _options.sigMethod,
-                oauth_timestamp: _options.timestamp,
-                oauth_token: _options.oauthToken,
-                oauth_version: _options.oauthVersion
+                oauth_timestamp:        _options.timestamp,
+                oauth_token:            _options.oauthToken,
+                oauth_version:          _options.oauthVersion
             };
 
-        _request('/publ/', 'get', parametrs);
+        async.forEachOf(modules,
+            // Iterator
+            function (item, key, cb) {
 
-        for(var module in modules) {
-            console.log( module );
-        }
+                _request('/' + key +  '/', 'get', parametrs, function (err, data) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    console.log( key );
+                    console.log( data );
+
+                    if( data.error.code !== "MODULE_NOT_ACTIVATED" && data.error.code !== "API_ACCESS_DENY") {
+                        modules[key].enable = 1;
+                    }
+
+                    cb(null, modules);
+                });
+
+            },
+            // Callback
+            function (err) {
+                if (err) {
+                    console.log( err );
+                }
+
+                cb(null, modules);
+            }
+        );
+
+        return;
     };
 
     function createPost(module, parametrs) {
         if (!_isInit) throw new Error('not init');
+    };
+
+    function validateOptions(_options, cb) {
+        //TODO:
     };
 
     return {
@@ -118,14 +152,16 @@ var uAPI = (function () {
 })();
 
 var test_uAPI = {
-    test1 : function () {
+    test1: function () {
         uAPI.init({
-            consumerKey: 'Nvw3Wm7v1bN8',
-            consumerSecret: 'Tu.yUtCw9ygRQPJFrDpgHurMeWn7q7',
-            oauthToken: 'Ugqe53bimpieTA4wZoSPPfWgakL.v5zjRREXl4RJ',
-            oauthTokenSecret: 'yRylogtLxZ4a0.gSdGRhRhn443ZVH422cqEVuGTx',
-            mainUrl: 'http://alphatest-6347.ucoz.ru/uapi'
+            consumerKey: 'fgswGdw4ts35dsgQQQ',
+            consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
+            oauthToken: '1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
+            oauthTokenSecret: '2Nnhxzybl4vJISVZtDpdbzEfEMGV23wL9.3wSrxj',
+            mainUrl: 'http://urepost.ucoz.net/uapi'
         });
-        uAPI.getModules();
+        uAPI.getModules(function(err, data) {
+            console.log(data);
+        });
     }
 };
