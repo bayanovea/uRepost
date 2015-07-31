@@ -19,10 +19,13 @@
 			"lib/jquery-2.1.4.min.js",
 			"lib/lodash.min.js",
 			"lib/async.min.js",
+			"lib/hmac-sha1.js",
+			"lib/md5.js",
 			//SRC
 			"js/getSocialData/vk.js", 
 			"js/authSocial/vk.js",
 			"js/uTranspiler.js",
+			"js/uAPI/app.js",
 			//CORE
 			"js/core.js" 
 		]

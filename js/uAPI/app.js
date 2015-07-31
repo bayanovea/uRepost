@@ -1,81 +1,54 @@
 'use strict';
 
-function microtime(get_as_float) {
-    var now = new Date().getTime() / 1000;
-    var s = parseInt(now);
+var uAPI = (function () {
+    //Global settings
+    var
+        _isInit = false,
+        _options = {
+            oauthNonce: CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
+            timestamp: Math.floor(Date.now() / 1000),
+            sigMethod: 'HMAC-SHA1',
+            oauthVersion: '1.0'
+        };
 
-    return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
-}
+    function http_build_query(formdata, numeric_prefix, arg_separator) {
+        var key, use_val, use_key, i = 0, tmp_arr = [];
 
-function http_build_query( formdata, numeric_prefix, arg_separator ) {	// Generate URL-encoded query string
-    var key, use_val, use_key, i = 0, tmp_arr = [];
-
-    if(!arg_separator){
-        arg_separator = '&';
-    }
-
-    for(key in formdata){
-        use_key = escape(key);
-        use_val = escape((formdata[key].toString()));
-        use_val = use_val.replace(/%20/g, '+');
-
-        if(numeric_prefix && !isNaN(key)){
-            use_key = numeric_prefix + i;
+        if (!arg_separator) {
+            arg_separator = '&';
         }
-        tmp_arr[i] = use_key + '=' + use_val;
-        i++;
+
+        for (key in formdata) {
+            use_key = escape(key);
+            use_val = escape((formdata[key].toString()));
+            use_val = use_val.replace(/%20/g, '+');
+
+            if (numeric_prefix && !isNaN(key)) {
+                use_key = numeric_prefix + i;
+            }
+            tmp_arr[i] = use_key + '=' + use_val;
+            i++;
+        }
+
+        return tmp_arr.join(arg_separator);
     }
 
-    return tmp_arr.join(arg_separator);
-}
+    function init(options) {
+        _isInit = true;
+        _options = _.defaults(options, _options);
+    };
 
+    function _request(requestUrl, method, parametrs) {
+        if (!_isInit) throw new Error('not init');
 
-var uAPIModule = {
-    // uAPIModule info
-    oauthNonce: CryptoJS.MD5(microtime().toString() + Math.floor(Math.random() * 999999999).toString()),
-    timestamp: new Date() / 1000,
-    sigMethod: 'HMAC-SHA1',
-    oauthVersion: '1.0',
-
-    // uAPIModule user app info
-    consumerKey: 'Nvw3Wm7v1bN8',
-    consumerSecret: 'Tu.yUtCw9ygRQPJFrDpgHurMeWn7q7',
-    oauthToken: 'Ugqe53bimpieTA4wZoSPPfWgakL.v5zjRREXl4RJ',
-    oauthTokenSecret: 'yRylogtLxZ4a0.gSdGRhRhn443ZVH422cqEVuGTx',
-    mainUrl: 'http://alphatest-6347.ucoz.ru/uapi',
-
-    init: function() {
-        var me = this;
-        me.addListeners();
-    },
-
-    addListeners: function() {
-        var me = this;
-        $(document)
-            .on('click', '.js-uapi-request', function () {
-                // uAPIModule user app info
-                var parametrs = {
-                    oauth_consumer_key: me.consumerKey,
-                    oauth_nonce: me.oauthNonce,
-                    oauth_signature_method: me.sigMethod,
-                    oauth_timestamp: me.timestamp,
-                    oauth_token: me.oauthToken,
-                    oauth_version: me.oauthVersion,
-                };
-                me.request('/users/', 'GET', parametrs);
-            });
-    },
-
-    // Request
-    request: function(requestUrl, method, parametrs) {
         if (method === undefined) {
             method = 'GET';
         }
 
-        var me = this,
-            requestUrl = me.mainUrl + $.trim(requestUrl).toLowerCase(),
+        var
+            requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
-            parametrs2 = parametrs,
+            //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
             oauthSignature = '',
@@ -86,7 +59,8 @@ var uAPIModule = {
         //parametrs = parametrs.replace('@', '');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
             encodeURIComponent(http_build_query(parametrs).replace('+', '%20'));
-        hashKey = me.consumerSecret + '&' + me.oauthTokenSecret;
+
+        hashKey = _options.consumerSecret + '&' + _options.oauthTokenSecret;
         oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
         parametrsForUrl = http_build_query(parametrs);
 
@@ -94,15 +68,64 @@ var uAPIModule = {
             ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
             : requestUrl + '?oauth_signature=' + oauthSignature;
 
+        console.log(parametrs);
+
         $.ajax({
             method: method,
             url: url,
-            dataType: "json",
-            //data: parametrs2,
-        }).done(function( data ) {
+            data: (method === 'POST') ? parametrs : '',
+        }).done(function (data) {
             console.log(data);
         });
+    };
+
+    function getModules() {
+        if (!_isInit) throw new Error('not init');
+
+        var
+            modules = {
+                blog:   { name: "Блог" },
+                board:  { name: "Доска объявлений" },
+                dir:    { name: "Каталог сайтов" },
+                publ:   { name: "Каталог статей" },
+                news:   { name: "Новости сайта" }
+            },
+            parametrs = {
+                oauth_consumer_key: _options.consumerKey,
+                oauth_nonce: _options.oauthNonce,
+                oauth_signature_method: _options.sigMethod,
+                oauth_timestamp: _options.timestamp,
+                oauth_token: _options.oauthToken,
+                oauth_version: _options.oauthVersion
+            };
+
+        _request('/publ/', 'get', parametrs);
+
+        for(var module in modules) {
+            console.log( module );
+        }
+    };
+
+    function createPost(module, parametrs) {
+        if (!_isInit) throw new Error('not init');
+    };
+
+    return {
+        init: init,
+        getModules: getModules,
+        createPost: createPost
+    };
+})();
+
+var test_uAPI = {
+    test1 : function () {
+        uAPI.init({
+            consumerKey: 'Nvw3Wm7v1bN8',
+            consumerSecret: 'Tu.yUtCw9ygRQPJFrDpgHurMeWn7q7',
+            oauthToken: 'Ugqe53bimpieTA4wZoSPPfWgakL.v5zjRREXl4RJ',
+            oauthTokenSecret: 'yRylogtLxZ4a0.gSdGRhRhn443ZVH422cqEVuGTx',
+            mainUrl: 'http://alphatest-6347.ucoz.ru/uapi'
+        });
+        uAPI.getModules();
     }
 };
-
-uAPIModule.init();
