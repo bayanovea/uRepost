@@ -17,7 +17,7 @@
 	
 	"background": {
 		"persistent": false,
-		"scripts": [ "lib/lodash.min.js", "js/getSocial/vk.js", "lib/jquery-2.1.4.min.js", "js/background.js" ]
+		"scripts": [ "lib/lodash.min.js", "js/getSocial/vk.js", "lib/jquery-2.1.4.min.js", "js/auth.js", "js/background.js" ]
 	},
 	
 	
