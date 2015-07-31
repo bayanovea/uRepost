@@ -13,7 +13,7 @@ var uAPI = (function () {
             timestamp: Math.floor(Date.now() / 1000),
             sigMethod: 'HMAC-SHA1',
             oauthVersion: '1.0',
-            mainUrl: 'http://urepost.ucoz.net/uapi'
+            //mainUrl: 'http://urepost.ucoz.net/uapi'
         },
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'],
         modulesRels = {
