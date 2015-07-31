@@ -12,7 +12,8 @@ var uAPI = (function () {
             oauthNonce: CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
             timestamp: Math.floor(Date.now() / 1000),
             sigMethod: 'HMAC-SHA1',
-            oauthVersion: '1.0'
+            oauthVersion: '1.0',
+            mainUrl: 'http://urepost.ucoz.net/uapi'
         },
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
 
