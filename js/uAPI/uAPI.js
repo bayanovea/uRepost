@@ -17,7 +17,7 @@ var uAPI = (function () {
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
 
     function http_build_query(formdata, numeric_prefix, arg_separator) {
-        var key, use_val, use_key, i = 0, tmp_arr = [], tmp_formdata;
+        var key, use_val, use_key, i = 0, tmp_arr = [];
 
         if (!arg_separator) {
             arg_separator = '&';
@@ -130,7 +130,7 @@ var uAPI = (function () {
                         return cb(err);
                     }
 
-                    if (data.error.msg !== "Материалов удовлетворяющих критериям запроса не найдено") {
+                    if (data.error.code) {
                         modules[key].error = data.error;
                     }
 
