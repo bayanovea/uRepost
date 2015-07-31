@@ -5,16 +5,12 @@ var PageOptions = (function () {
 			var 
 				form = $('[data-uapi-options]')[0],
 				options = result['uapi_options'];
+			if (!options)
+				return cb();
 			
-			$('input', form).each(function () {
-				var 
-					$elInput = $(this),
-					name = $elInput.attr('name');
-				$elInput.val(options[name]);
-				//options[$elInput.attr('name')] = $elInput.val();
-			});
-			
-			
+			for (var name in options){
+				$('input[name="'+name+'"]',form).val(options[name]);
+			}
 			cb();
 		})
 	}
