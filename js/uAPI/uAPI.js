@@ -131,7 +131,7 @@ var uAPI = (function () {
                         return cb(err);
                     }
 
-                    if (data.error.code) {
+                    if (data.error && data.error.code) {
                         modules[key].error = data.error;
                     }
 
