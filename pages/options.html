@@ -3,40 +3,68 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Настройки uRepost</title>
-	<link rel="stylesheet/less" type="text/css" href="/styles/less/options.less">
+	<!--[BOOTSTRAP]-->
+	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap-theme.min.css"/>
+	<!--[U-REPOST]-->
+	<link rel="stylesheet" href="/styles/css/options.css">
+
 </head>
-<body>
+<body class="urepost">
 
-<h1>Настройки</h1>
-
-<!--АНДРЕЙ-->
-<div class="auth">
-	<button class="js-auth" style="display: none;">Авторизоваться</button>
-	<p class="js-token">
-		VK ACCESS TOKEN: <span class="js-token-val">no token</span>
-	</p>
-</div>
+<header class="header">
+	<div class="wrap"><a href="/" class="logo text-replace">uRepost</a></div>
+</header>
 
 
-<!--ЖЕНЯ-->
-<div>
-	<button class="js-uapi-request">Запрос к uAPI</button>
-</div>
+<main class="content">
+	<section class="content-row content-row-ms">
+		<div class="row-ttl">Настройки uAPI
+			<span class="ms-ttlnote">Для корректной работы расширения Вам необходимо <a target="_blank" href="http://api.ucoz.net/ru/join/reg">создать
+					приложение uAPI</a>  и ввести полученные данные в форму ниже. </span>
+		</div>
+		<div class="settings">
+		</div>
+	</section>
+	
+	
+	<section class="content-row content-row-bg">
+		<div class="row-ttl">Настройки соц. сетей
+			<span class="ms-ttlnote"> Для репоста записи из социальной сети к себе на сайт, Вам необходимо подключить социальные сети. </span>
+		</div>
+		<div class="settings">
+		</div>
+	</section>
+	
+	
+	<section class="content-row content-row-ms">
+		<div class="row-ttl">Вопросы/ответы</div>
+		<span class="ms-ttlnote">При возникновении проблем в работе с расширением, обращайтесь с вопросами по адреса support@ucoz.ru</span>
+		<div class="settings">
+			<div class="wrap">
+				
+				<br>
+				Частозадаваемые вопросы и ответы на них будут размещены позже.
+				<br><br><br><br>
+				
+			</div>
+		</div>
+	</section>
+
+</main>
+<footer class="footer"> uCoz Web Services © 2015</footer>
 
 
-<!--ДИМА-->
-<div>
-
-
-</div>
-
-
+<!--LIB-->
 <script src="/lib/jquery-2.1.4.min.js"></script>
 <script src="/lib/lodash.min.js"></script>
 <script src="/lib/less.min.js"></script>
-<script src="/js/auth.js"></script>
 <script src="/lib/md5.js"></script>
 <script src="/lib/hmac-sha1.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<!--[U-REPOST]-->
+<script src="/js/authSocial/vk.js"></script>
 <script src="/js/uAPI/app.js"></script>
+
 </body>
 </html>
