@@ -56,18 +56,20 @@ var uRepostVK = (function () {
 			})
 			.on('change', '.js-modules', function () {
 				var module = $(this).val();
+				$('.js-categories', $(this).closest('.js-urepost-modal')).attr('disabled', 'disabled');
 				chrome.runtime.sendMessage({method: 'uapi.getCategories', module: module}, function (res) {
-					if (err) {
-						console.log(err);
+					if (res.err) {
+						console.log(res.err);
 						return;
 					}
-					showcategories(res.categories);
+					showCategories(res.categories);
 				});
 			});
 	};
 	var showPopup = function (data) {
 		var $modal = $(_.template(data.tmpl)({post: data.post, modules: data.modules}));
 		$('body').append($modal);
+		$('.js-modules', $modal).trigger('change');
 		$modal.fadeIn();
 	};
 	var closePopup = function ($popup) {
@@ -76,7 +78,11 @@ var uRepostVK = (function () {
 		});
 	};
 	var showCategories = function (categories) {
-		console.log(categories);
+		var options = '';
+		categories.forEach(function (category) {
+			options += '<option value="' + category.id + '">' + category.name + '</option>';
+		});
+		$('.js-categories').html(options).removeAttr('disabled');
 	};
 	
 	return {

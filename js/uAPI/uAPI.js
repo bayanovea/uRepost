@@ -20,7 +20,7 @@ var uAPI = (function () {
             blog: {
                 category: "category",
                 title: "title",
-                message: "message"
+                content: "message"
             },
             board: {
                 category: "category",
@@ -254,9 +254,6 @@ var uAPI = (function () {
                     return cb(err);
                 }
 
-                console.log(err);
-                console.log( data );
-
                 cb(null, data);
             });
         }
@@ -305,10 +302,10 @@ var test_uAPI = {
             console.log(err);
             console.log(data);
         });*/
-        uAPI.createPost('publ', {
-            category: "1",
+        uAPI.createPost('board', {
+            category: "2",
             title: "yo",
-            message: "yoyo"
+            content: "yoyo222"
         }, function(err, data) {
             console.log(err);
             console.log(data);
