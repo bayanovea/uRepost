@@ -1,6 +1,9 @@
 var PageOptions = (function () {
-	
-	
+	var
+		resource = {
+			vkOnline: 'ВК подключен',
+			vkOffline: 'Подключить ВК'
+		};
 	
 	function fillUApiOptions(cb) {
 		chrome.storage.local.get('uapi_options', function (result) {
@@ -29,37 +32,53 @@ var PageOptions = (function () {
 	}
 	
 	function saveUApiOptions(options, cb) {
-		//chrome.storage.onChanged.addListener(function(){});
 		chrome.storage.local.set({'uapi_options': options}, function () {
 			cb();
 		});
 	}
 	
 	function joinVK(cb) {
-		
-		var action = {
-			method: 'vk.auth'
-		};
-		
-		chrome.runtime.sendMessage(action, function (res) {
+		chrome.runtime.sendMessage({method: 'vk.auth'}, function (res) {
 			if (res.err) {
 				return cb(res.err);
 			}
+			cb(null);
 		});
 	}
 	
-	function onStorage(changes, namespace){
+	function fillVKOptions(options) {
+		options = options || {};
+		var
+			$elBtn = $('[data-join-vk]');
+		
+		if (options.online) {
+			$elBtn.html(resource.vkOnline);
+			$elBtn.removeClass('btn-success');
+			$elBtn.addClass('btn-default');
+			$elBtn.prop('disabled', true);
+		} else {
+			$elBtn.html(resource.vkOffline);
+			$elBtn.removeClass('btn-default');
+			$elBtn.addClass('btn-success');
+			$elBtn.removeAttr('disabled');
+		}
+	}
+	
+	function onStorage(changes) {
 		for (var key in changes) {
 			var storageChange = changes[key];
 			
 			switch (key) {
 				case "uapi_options" :
+					
 					break;
 				case "vkToken" :
-					var $elBtn = $('[data-join-vk]');
-					$elBtn.removeClass('btn-default');
-					$elBtn.addClass('btn-success');
-					$elBtn.prop('disabled', true);
+					var token = storageChange.newValue;
+					if (token) {
+						fillVKOptions({online: true})
+					} else {
+						fillVKOptions({});
+					}
 					break;
 			}
 			
@@ -70,7 +89,7 @@ var PageOptions = (function () {
 	function init() {
 		
 		fillUApiOptions(function () {
-			$(':submit', '[data-uapi-options]').removeAttr('disabled');
+			$(':submit', '[data-uapi-options]').show();
 		});
 		
 		// Настройки uAPI
@@ -105,33 +124,20 @@ var PageOptions = (function () {
 		$('[data-join-vk]')
 			.on('click', function () {
 				var $elBtn = $(this);
-				joinVK(function (result) {
-					if (result) {
-						$elBtn.removeClass('btn-default');
-						$elBtn.addClass('btn-success');
-						$elBtn.prop('disabled', true);
-					} else {
-						$elBtn.removeClass('btn-success');
-						$elBtn.addClass('btn-default');
-						$elBtn.removeAttr('disabled');
-					}
+				joinVK(function (err, result) {
 				});
 			});
 		
 		chrome.storage.onChanged.addListener(onStorage);
 		
 		chrome.storage.local.get('vkToken', function (result) {
-			var $elBtn = $('[data-join-vk]');
 			var token = result['vkToken'];
-			if ( token) {
-				$elBtn.removeClass('btn-default');
-				$elBtn.addClass('btn-success');
-				$elBtn.prop('disabled', true);
-			}else{
-				$elBtn.removeClass('btn-success');
-				$elBtn.addClass('btn-default');
-				$elBtn.removeAttr('disabled');
+			if (token) {
+				fillVKOptions({online: true})
+			} else {
+				fillVKOptions({})
 			}
+			$('[data-join-vk]').show();
 		});
 	}
 	

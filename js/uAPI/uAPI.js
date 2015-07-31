@@ -13,30 +13,60 @@ var uAPI = (function () {
             timestamp: Math.floor(Date.now() / 1000),
             sigMethod: 'HMAC-SHA1',
             oauthVersion: '1.0',
-            mainUrl: 'http://urepost.ucoz.net/uapi'
+            //mainUrl: 'http://urepost.ucoz.net/uapi'
         },
-        _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
+        _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'],
+        modulesRels = {
+            blog: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            board: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            dir: {
+                category: "category",
+                title: "title",
+                content: "description"
+            },
+            publ: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            load: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            news: {
+                category: "category",
+                title: "title",
+                content: "message"
+            }
+        };
 
     function http_build_query(formdata, numeric_prefix, arg_separator) {
-        var key, use_val, use_key, i = 0, tmp_arr = [];
-
-        if (!arg_separator) {
-            arg_separator = '&';
-        }
+        var key, use_val, use_key, i = 0, tmp_arr = [], tmp_formdata = [], ret = '';
 
         for (key in formdata) {
-            use_key = escape(key);
-            use_val = escape((formdata[key].toString()));
-            use_val = use_val.replace(/%20/g, '+');
-
-            if (numeric_prefix && !isNaN(key)) {
-                use_key = numeric_prefix + i;
-            }
-            tmp_arr[i] = use_key + '=' + use_val;
-            i++;
+            tmp_formdata.push({ name: key, value: formdata[key] });
         }
 
-        return tmp_arr.join(arg_separator);
+        tmp_formdata.sort(function(obj1, obj2) {
+            return obj1.name > obj2.name;
+        });
+
+        for(var i = 0; i < tmp_formdata.length; i++) {
+            ret = ret + escape(tmp_formdata[i].name) + "=" + escape(tmp_formdata[i].value) + "&";
+        }
+
+        ret = ret.slice(0, -1);
+
+        return ret;
     }
 
     function init(options) {
@@ -59,6 +89,8 @@ var uAPI = (function () {
             oauthSignature = '',
             url = '',
             urlFor = '';
+
+        console.log(parametrsForUrl);
 
         //parametrs = parametrs.replace('@', '');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
@@ -119,7 +151,7 @@ var uAPI = (function () {
                 oauth_signature_method: _options.sigMethod,
                 oauth_timestamp:        _options.timestamp,
                 oauth_token:            _options.oauthToken,
-                oauth_version:          _options.oauthVersion
+                oauth_version:          _options.oauthVersion,
             };
 
         async.forEachOf(modules,
@@ -194,25 +226,33 @@ var uAPI = (function () {
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
-                oauth_consumer_key:     _options.consumerKey,
-                oauth_nonce:            _options.oauthNonce,
-                oauth_signature_method: _options.sigMethod,
-                oauth_timestamp:        _options.timestamp,
-                oauth_token:            _options.oauthToken,
-                oauth_version:          _options.oauthVersion,
+                    oauth_consumer_key:     _options.consumerKey,
+                    oauth_nonce:            _options.oauthNonce,
+                    oauth_signature_method: _options.sigMethod,
+                    oauth_timestamp:        _options.timestamp,
+                    oauth_token:            _options.oauthToken,
+                    oauth_version:          _options.oauthVersion,
+                },
+                __parametrs = {};
 
-                category:               _parametrs.category,
-                title:                  _parametrs.title,
-                message:                _parametrs.message
-            };
+            if(_parametrs.category) {
+                __parametrs[modulesRels[module].category] = _parametrs.category;
+            }
+            if(_parametrs.title) {
+                __parametrs[modulesRels[module].title] = _parametrs.title;
+            }
+            if(_parametrs.content) {
+                __parametrs[modulesRels[module].content] = _parametrs.content;
+            }
+
+            parametrs = _.defaults(parametrs, __parametrs);
+
+            console.log(parametrs);
 
             _request('/' + module +  '/', 'POST', parametrs, _options, function (err, data) {
                 if (err) {
                     return cb(err);
                 }
-
-                console.log(err);
-                console.log( data );
 
                 cb(null, data);
             });
@@ -262,20 +302,13 @@ var test_uAPI = {
             console.log(err);
             console.log(data);
         });*/
-
-        uAPI.getModules(function(err, data) {
-            console.log(data);
-        });
-        /*uAPI.getCategories('publ', function(err, data) {
-        });*/
-
-        /*uAPI.createPost('publ', {
-            category: "1",
+        uAPI.createPost('board', {
+            category: "2",
             title: "yo",
-            message: "yoyo"
+            content: "yoyo222"
         }, function(err, data) {
             console.log(err);
             console.log(data);
-        })*/
+        })
     }
 };
