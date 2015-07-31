@@ -28,6 +28,7 @@
 			
 			"js/background.js" 
 		]
+		"scripts": [ "lib/lodash.min.js", "js/getSocialData/vk.js", "lib/jquery-2.1.4.min.js", "js/authSocial/vk.js", "js/uTranspiler.js", "js/background.js" ]
 	},
 	
 	

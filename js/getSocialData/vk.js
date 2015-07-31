@@ -14,7 +14,7 @@ var getVK = {
 		var me = this;
 		if ( ! me.token) {
 			console.log('no token');
-			auth.auth(function () {
+			authVK.auth(function () {
 				me.getAccessToken(cb);
 			});
 			return;
@@ -34,7 +34,7 @@ var getVK = {
 		var me = this;
 		me.checkAccessToken(function () {
 			$.ajax({
-				url: me.apiUrl + id + '&access_token=' + me.token
+				url: me.apiUrl + id + '&extended=1&access_token=' + me.token
 			})
 			.done(function (res) {
 				cb(res);
