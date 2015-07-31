@@ -23,6 +23,14 @@
 	z-index: 9999;
 	overflow: auto;
 	box-sizing: border-box;
+	display: none;
+}
+.urepost-modal-close {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
 }
 .urepost-modal {
 	position: relative;
@@ -31,6 +39,15 @@
 	padding: 20px 30px;
 	border-radius: 6px;
 	background: #fff;
+}
+.urepost-modal-close-btn {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+.urepost-modal .field {
+	display: block;
+	margin: 15px 0;
 }
 .urepost-modal label {
 	display: block;

@@ -14,7 +14,7 @@ var uRepostVK = (function () {
 				var idPost = $elPost.attr('id');
 				
 				$(elBtnTemplate01).appendTo($elPost.find('.post_image:first'))
-					.on('click', function () {
+					.on('click.uRepostBtnClick', function () {
 						async.parallel(
 							{
 								post: function (cb){
@@ -49,12 +49,34 @@ var uRepostVK = (function () {
 					});
 			})
 			.on('mouseleave', 'div.post', function () {
-				$('.urepost-vk-btn', $(this)).remove();
+				$('.urepost-vk-btn', $(this)).off('.uRepostBtnClick').remove();
+			})
+			.on('click', '.js-urepost-modal-close', function () {
+				closePopup($(this).closest('.js-urepost-modal'));
+			})
+			.on('change', '.js-modules', function () {
+				var module = $(this).val();
+				chrome.runtime.sendMessage({method: 'uapi.getCategories', module: module}, function (res) {
+					if (err) {
+						console.log(err);
+						return;
+					}
+					showcategories(res.categories);
+				});
 			});
 	};
 	var showPopup = function (data) {
-		$('body').append(_.template(data.tmpl)({post: data.post, modules: data.modules}));
-		$('.js-selectpicker').selectpicker();
+		var $modal = $(_.template(data.tmpl)({post: data.post, modules: data.modules}));
+		$('body').append($modal);
+		$modal.fadeIn();
+	};
+	var closePopup = function ($popup) {
+		$popup.fadeOut(300, function () {
+			$el.remove();
+		});
+	};
+	var showCategories = function (categories) {
+		console.log(categories);
 	};
 	
 	return {

@@ -29,6 +29,14 @@ var Core = (function () {
 					});
 				});
 				break;
+			case 'uapi.getCategories':
+				uAPI.getCategories(req.module, function (err, categories) {
+					cb({
+						err: err,
+						categories: categories
+					});
+				});
+				break;
 			default :
 				cb(new Error('unknown method'));
 				break;
