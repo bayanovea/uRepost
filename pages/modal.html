@@ -1,6 +1,16 @@
 <div class="urepost-modal-overlay">
 	<div class="urepost-modal">
-		<p><%= data.title %></p>
-		<p><%= data.content %></p>
+		<p>
+			<label for="title">Название поста</label>
+			<input type="text" value="<%= post.title %>">
+		</p>
+		<p>
+			<label for="modules">Выберите модуль</label>
+			<select name="" id="js-modules">
+				<% modules.forEach(function (module) { %>
+					<option value="<%= module.code %>" <%= module.error ? 'disabled' : '' %>><%= module.name %></option>
+				<% }); %>
+			</select>
+		</p>
 	</div>
 </div>

@@ -52,6 +52,7 @@
 			"js": [
 				"lib/jquery-2.1.4.min.js",
 				"lib/lodash.min.js",
+				"lib/async.min.js",
 				"js/urepost-vk.js"
 			]
 		}
