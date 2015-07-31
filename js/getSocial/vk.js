@@ -7,32 +7,41 @@ var getVK = {
 	
 	init: function () {
 		var me = this;
-		me.getAccessToken(function (vkToken) {
-			me.token = vkToken;
-		});
+		me.getAccessToken();
+	},
+	
+	checkAccessToken: function (cb) {
+		var me = this;
+		if ( ! me.token) {
+			console.log('no token');
+			auth.auth(function () {
+				me.getAccessToken(cb);
+			});
+			return;
+		}
+		cb();
 	},
 	
 	getAccessToken: function(cb) {
 		var me = this;
 		me.db.get('vkToken', function (data) {
-			cb(data.vkToken);
+			me.token = data.vkToken;
+			cb && cb(me.token);
 		});
 	},
 	
 	getPostById: function(id, cb) {
 		var me = this;
-		if ( ! me.token) {
-			console.log('no token');
-			return;
-		}
-		$.ajax({
-			url: me.apiUrl + id + '&access_token=' + me.token
-		})
-		.done(function (res) {
-			cb(res);
-		})
-		.fail(function () {
-			cb(null);
+		me.checkAccessToken(function () {
+			$.ajax({
+				url: me.apiUrl + id + '&access_token=' + me.token
+			})
+			.done(function (res) {
+				cb(res);
+			})
+			.fail(function () {
+				cb(null);
+			});
 		});
 	}
 	

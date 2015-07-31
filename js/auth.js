@@ -5,7 +5,7 @@ var auth = {
 	authUrl: 'https://oauth.vk.com/authorize',
 	authOpts: {
 		client_id: '5014245',
-		scope: 'friends',
+		scope: 'wall',
 		redirect_uri: 'https://oauth.vk.com/blank.html',
 		response_type: 'token',
 		display: 'popup'
@@ -24,11 +24,11 @@ var auth = {
 		var me = this;
 		$(document)
 			.on('click', '.js-auth', function () {
-				me.auth();
+				me.auth(me.showToken);
 			});
 	},
 	
-	auth: function() {
+	auth: function(cb) {
 		var me = this;
 		var authOptsArr = [];
 		Object.keys(me.authOpts).forEach(function (opt) {
@@ -44,8 +44,7 @@ var auth = {
 				var tabUpdateListener = function(tabId, changeInfo) {
 					if (authTabId === tabId && changeInfo.url && (changeInfo.url.indexOf('access_token=') + 1)) {
 						var token = changeInfo.url.split('access_token=')[1].split('&')[0];
-						me.saveAccessToken(token);
-						me.showToken(token);
+						me.saveAccessToken(token, cb);
 						chrome.tabs.remove(tabId);
 						chrome.tabs.onUpdated.removeListener(tabUpdateListener);
 					}
@@ -67,9 +66,11 @@ var auth = {
 		}
 	},
 	
-	saveAccessToken: function(token) {
+	saveAccessToken: function(token, cb) {
 		var me = this;
-		me.db.set({vkToken: token}, function () {});
+		me.db.set({vkToken: token}, function () {
+			cb(token);
+		});
 	},
 	
 	getAccessToken: function(cb) {
