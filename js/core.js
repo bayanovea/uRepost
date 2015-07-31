@@ -20,6 +20,9 @@ var Core = (function () {
 				break;
 			case 'uapi.getModules':
 				uAPI.getModules(function (err, modules) {
+					if (err.message === 'not init'){
+						window.open(chrome.extension.getURL('pages/options.html'))	
+					}
 					cb({
 						err: err,
 						modules: modules
@@ -50,7 +53,7 @@ var Core = (function () {
 		chrome.storage.local.get('uapi_options', function (result) {
 			var options = result['uapi_options'];
 			if (! options) return;
-			uAPI.init(options);
+			//uAPI.init(options);
 		});
 		
 		chrome.runtime.onMessage.addListener(onMessage);
