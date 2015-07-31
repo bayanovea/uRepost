@@ -25,7 +25,7 @@
 			"js/getSocialData/vk.js", 
 			"js/authSocial/vk.js",
 			"js/uTranspiler.js",
-			"js/uAPI/app.js",
+			"js/uAPI/uAPI.js",
 			//CORE
 			"js/core.js" 
 		]
