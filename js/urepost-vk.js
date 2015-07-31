@@ -14,7 +14,7 @@ var uRepostVK = (function () {
 				var idPost = $elPost.attr('id');
 				
 				$(elBtnTemplate01).appendTo($elPost.find('.post_image:first'))
-					.on('click', function () {
+					.on('click.uRepostBtnClick', function () {
 						async.parallel(
 							{
 								post: function (cb){
@@ -49,12 +49,19 @@ var uRepostVK = (function () {
 					});
 			})
 			.on('mouseleave', 'div.post', function () {
-				$('.urepost-vk-btn', $(this)).remove();
+				$('.urepost-vk-btn', $(this)).off('.uRepostBtnClick').remove();
+			})
+			.on('click', '.js-urepost-modal-close', function () {
+				var $el = $(this).closest('.js-urepost-modal');
+				$el.fadeOut(300, function () {
+					$el.remove();
+				});
 			});
 	};
 	var showPopup = function (data) {
-		$('body').append(_.template(data.tmpl)({post: data.post, modules: data.modules}));
-		$('.js-selectpicker').selectpicker();
+		var $modal = $(_.template(data.tmpl)({post: data.post, modules: data.modules}));
+		$('body').append($modal);
+		$modal.fadeIn();
 	};
 	
 	return {
