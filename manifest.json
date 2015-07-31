@@ -1,18 +1,45 @@
 {
 	"manifest_version": 2,
 	
+	
 	"name": "uRepost",
 	"description": "",
 	"version": "0.1",
 	
+	"icons": {
+		"32" : "img/icons/icon-32.png",
+		"64" : "img/icons/icon-64.png",
+		"96" : "img/icons/icon-96.png",
+		"128" : "img/icons/icon-128.png"
+	},
+	
 	"browser_action": {
-		"default_icon": "img/icon.png",
+		"default_title": "uRepost",
+		"default_icon": {
+			"32" : "img/icons/icon-32.png",
+			"64" : "img/icons/icon-64.png",
+			"96" : "img/icons/icon-96.png",
+			"128" : "img/icons/icon-128.png"
+		},
 		"default_popup": "pages/popup.html"
 	},
+	
 	"permissions": [
 		"storage",
 		"activeTab",
-		"http://*/*"
+		"tabs",
+		"http://*/*",
+		"https://*/*"
+	],
+	
+	"content_scripts": [
+		{
+			"matches": [
+				"http://vk.com/*",
+				"https://vk.com/*"
+			],
+			"css": [ "styles/css/injection-vk.css" ]
+		}
 	],
 	
 	"options_page": "pages/options.html"
