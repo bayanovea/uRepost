@@ -4,15 +4,22 @@
 		<a href="javascript://" class="urepost-modal-close-btn js-urepost-modal-close">Закрыть</a>
 		<div class="urepost-modal__field">
 			<label for="title">Название поста</label>
-			<input class="urepost-modal__field__control" type="text" value="<%= post.title %>">
+			<input class="urepost-modal__field__control" type="text" value="<%= post.title %>" name="title">
 		</div>
 		<div class="field">
 			<label for="modules">Выберите модуль</label>
-			<select class="urepost-modal__field__control" id="js-modules" name="module">
+			<select class="urepost-modal__field__control js-modules" name="module">
 				<% modules.forEach(function (module) { %>
 					<option value="<%= module.code %>" <%= module.error ? 'disabled' : '' %>><%= module.name %></option>
 				<% }); %>
 			</select>
+		</div>
+		<div class="field">
+			<label for="modules">Выберите модуль</label>
+			<select class="urepost-modal__field__control js-categories" name="category" disabled></select>
+		</div>
+		<div class="field" style="display: none;">
+			<textarea name="content"><%= post.content %></textarea>
 		</div>
 		<div class="urepost-modal__field">
 			<button class="urepost-modal__field__control" disabled>Добавить пост</button>
