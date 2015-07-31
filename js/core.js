@@ -37,6 +37,14 @@ var Core = (function () {
 					});
 				});
 				break;
+			case 'uapi.createPost':
+				uAPI.createPost(req.module, req.data, function (err, data) {
+					cb({
+						err: err,
+						data: data
+					});
+				});
+				break;
 			default :
 				cb(new Error('unknown method'));
 				break;
