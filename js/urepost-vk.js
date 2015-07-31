@@ -32,7 +32,10 @@ var uRepostVK = (function () {
 	};
 	var showPopup = function (data) {
 		$.get(chrome.extension.getURL('pages/modal.html'), function (tmpl) {
-			$('body').append(_.template(tmpl)({data: data}));
+			uAPI.getModules(function (modules) {
+				console.log(modules);
+				//$('body').append(_.template(tmpl)({data: data}));
+			});
 		});
 	};
 	
