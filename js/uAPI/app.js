@@ -42,9 +42,7 @@ var uAPI = (function () {
         _options = _.defaults(options, _options);
     };
 
-    function _request(requestUrl, method, parametrs, cb) {
-        if (!_isInit) throw new Error('not init');
-
+    function _request(requestUrl, method, parametrs, _options, cb) {
         if (method === undefined) {
             method = 'GET';
         }
@@ -87,13 +85,32 @@ var uAPI = (function () {
         if (!_isInit) throw new Error('not init');
 
         var
-            modules = {
-                blog:   { name: "Блог", enable: 0 },
-                board:  { name: "Доска объявлений", enable: 0 },
-                dir:    { name: "Каталог сайтов", enable: 0 },
-                publ:   { name: "Каталог статей", enable: 0 },
-                news:   { name: "Новости сайта", enable: 0 }
-            },
+            modules = [
+                {
+                    code: "blog",
+                    name: "Блог"
+                },
+                {
+                    code: "board",
+                    name: "Доска объявлений"
+                },
+                {
+                    code: "dir",
+                    name: "Каталог сайтов"
+                },
+                {
+                    code: "publ",
+                    name: "Каталог статей"
+                },
+                {
+                    code: "load",
+                    name: "Каталог файлов"
+                },
+                {
+                    code: "news",
+                    name: "Новости сайта"
+                }
+            ],
             parametrs = {
                 oauth_consumer_key:     _options.consumerKey,
                 oauth_nonce:            _options.oauthNonce,
@@ -107,16 +124,13 @@ var uAPI = (function () {
             // Iterator
             function (item, key, cb) {
 
-                _request('/' + key +  '/', 'get', parametrs, function (err, data) {
+                _request('/' + item.code +  '/', 'get', parametrs, _options, function (err, data) {
                     if (err) {
                         return cb(err);
                     }
 
-                    console.log( key );
-                    console.log( data );
-
-                    if( data.error.code !== "MODULE_NOT_ACTIVATED" && data.error.code !== "API_ACCESS_DENY") {
-                        modules[key].enable = 1;
+                    if (data.error.msg !== "Материалов удовлетворяющих критериям запроса не найдено") {
+                        modules[key].error = data.error;
                     }
 
                     cb(null, modules);
@@ -136,23 +150,88 @@ var uAPI = (function () {
         return;
     };
 
+    function getCategories(module, cb) {
+        if (!_isInit) throw new Error('not init');
+
+        if ( ['blog', 'board', 'dir', 'publ', 'load', 'news'].indexOf(module) !== -1 ) {
+            var parametrs = {
+                oauth_consumer_key:     _options.consumerKey,
+                oauth_nonce:            _options.oauthNonce,
+                oauth_signature_method: _options.sigMethod,
+                oauth_timestamp:        _options.timestamp,
+                oauth_token:            _options.oauthToken,
+                oauth_version:          _options.oauthVersion
+            };
+
+            _request('/' + module +  '/category', 'get', parametrs, _options, function (err, data) {
+                if (err) {
+                    return cb(err);
+                }
+
+                var categories = data
+                    .filter(function(item) {
+                        return item.type === 'category';
+                    })
+                    .map(function (category) {
+                        return {
+                            id: category.id,
+                            name: category.name
+                        };
+                    });
+
+                cb(null, categories);
+            });
+        }
+        else {
+
+        }
+    }
+
     function createPost(module, parametrs) {
         if (!_isInit) throw new Error('not init');
     };
 
-    function validateOptions(_options, cb) {
-        //TODO:
+    function validateOptions(options, cb) {
+
+        var parametrs = {
+            oauth_consumer_key:     options.consumerKey,
+            oauth_nonce:            CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
+            oauth_signature_method: 'HMAC-SHA1',
+            oauth_timestamp:        Math.floor(Date.now() / 1000),
+            oauth_token:            options.oauthToken,
+            oauth_version:          '1.0'
+        };
+
+        _request('/users/', 'get', parametrs, options, function(err, data) {
+            if (err) {
+                cb(err);
+            }
+            cb(null, data);
+        });
     };
 
     return {
         init: init,
         getModules: getModules,
-        createPost: createPost
+        getCategories: getCategories,
+        createPost: createPost,
+        validateOptions: validateOptions
     };
 })();
 
 var test_uAPI = {
     test1: function () {
+        /*uAPI.validateOptions({
+            consumerKey: 'fgswGdw4ts35dsgQQQ',
+            consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
+            oauthToken: '1 1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
+            oauthTokenSecret: '2Nnhxzybl4vJISVZtDpdbzEfEMGV23wL9.3wSrxj',
+            mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo '
+        }, function(err, data) {
+            console.log(err);
+            console.log(data);
+        });*/
+
         uAPI.init({
             consumerKey: 'fgswGdw4ts35dsgQQQ',
             consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
@@ -161,7 +240,10 @@ var test_uAPI = {
             mainUrl: 'http://urepost.ucoz.net/uapi'
         });
         uAPI.getModules(function(err, data) {
-            console.log(data);
+            //console.log(data);
+        });
+        uAPI.getCategories('publ', function(err, data) {
+            //console.log(data);
         });
     }
 };
