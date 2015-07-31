@@ -54,6 +54,7 @@ var uRepostVK = (function () {
 	};
 	var showPopup = function (data) {
 		$('body').append(_.template(data.tmpl)({post: data.post, modules: data.modules}));
+		$('.js-selectpicker').selectpicker();
 	};
 	
 	return {
