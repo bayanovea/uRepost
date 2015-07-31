@@ -1,0 +1,18 @@
+{
+	"manifest_version": 2,
+	
+	"name": "uRepost",
+	"description": "",
+	"version": "0.1",
+	
+	"browser_action": {
+		"default_icon": "img/icon.png",
+		"default_popup": "html/popup.html"
+	},
+	"permissions": [
+		"activeTab",
+		"http://*/*"
+	],
+	
+	"options_page": "html/options.html"
+}
