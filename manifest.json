@@ -50,10 +50,14 @@
 			],
 			"css": [ "styles/css/urepost-vk.css" ],
 			"js": [
-				"lib/jquery-2.1.4.min.js", 
+				"lib/jquery-2.1.4.min.js",
+				"lib/lodash.min.js",
 				"js/urepost-vk.js"
 			]
 		}
+	],
+	"web_accessible_resources": [
+		"pages/modal.html"
 	],
 	
 	"options_page": "pages/options.html",
