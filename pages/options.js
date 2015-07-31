@@ -89,7 +89,7 @@ var PageOptions = (function () {
 	function init() {
 		
 		fillUApiOptions(function () {
-			$(':submit', '[data-uapi-options]').removeAttr('disabled');
+			$(':submit', '[data-uapi-options]').show();
 		});
 		
 		// Настройки uAPI
