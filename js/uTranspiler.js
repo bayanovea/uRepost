@@ -14,11 +14,19 @@ var uTranspiler = (function () {
 				newData.content = (data.copy_text ? data.copy_text + '<br>' : '') + newData.content;
 			}
 			var posterId = data.post_type === 'copy' ? data.copy_owner_id : data.from_id;
+			var poster;
 			if (posterId < 0) {
-				newData.title = 'Репост "' + rawData.response.groups[0].name + '"';
+				posterId = Math.abs(posterId);
+				poster = rawData.response.groups.filter(function (group) {
+					return posterId === group.gid;
+				})[0];
+				newData.title = poster ? ('Репост "' + poster.name + '"') : '';
 			}
 			else {
-				newData.title = 'Репост "' + rawData.response.profiles[0].first_name + ' ' + rawData.response.profiles[0].last_name + '"';
+				poster = rawData.response.profiles.filter(function (profile) {
+					return posterId === profile.uid;
+				})[0];
+				newData.title = poster ? ('Репост "' + poster.first_name + ' ' + poster.last_name + '"') : '';
 			}
 			
 			if (data.attachments) {
