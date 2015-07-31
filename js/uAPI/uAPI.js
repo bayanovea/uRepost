@@ -83,7 +83,7 @@ var uAPI = (function () {
     };
 
     function getModules(cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         var
             modules = [
@@ -152,7 +152,7 @@ var uAPI = (function () {
     };
 
     function getCategories(module, cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
@@ -189,7 +189,7 @@ var uAPI = (function () {
     }
 
     function createPost(module, _parametrs, cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
