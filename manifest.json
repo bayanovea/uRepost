@@ -6,10 +6,10 @@
 	"version": "0.1",
 	
 	"icons": {
-		"32" : "img/icons/icon-32.png",
-		"64" : "img/icons/icon-64.png",
-		"96" : "img/icons/icon-96.png",
-		"128" : "img/icons/icon-128.png"
+		"32" : "img/icons/32.png",
+		"64" : "img/icons/64.png",
+		"96" : "img/icons/96.png",
+		"128" : "img/icons/128.png"
 	},
 	
 	"background": {
@@ -31,10 +31,10 @@
 	"browser_action": {
 		"default_title": "uRepost",
 		"default_icon": {
-			"32" : "img/icons/icon-32.png",
-			"64" : "img/icons/icon-64.png",
-			"96" : "img/icons/icon-96.png",
-			"128" : "img/icons/icon-128.png"
+			"32" : "img/icons/32.png",
+			"64" : "img/icons/64.png",
+			"96" : "img/icons/96.png",
+			"128" : "img/icons/128.png"
 		},
 		"default_popup": "pages/popup.html"
 	},
