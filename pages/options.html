@@ -5,7 +5,7 @@
 	<title>Настройки uRepost</title>
 	<!--[BOOTSTRAP]-->
 	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap-theme.min.css"/>
+	<!--<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap-theme.min.css"/>-->
 	<!--[U-REPOST]-->
 	<link rel="stylesheet" href="/styles/css/options.css">
 
@@ -23,7 +23,62 @@
 			<span class="ms-ttlnote">Для корректной работы расширения Вам необходимо <a target="_blank" href="http://api.ucoz.net/ru/join/reg">создать
 					приложение uAPI</a>  и ввести полученные данные в форму ниже. </span>
 		</div>
-		<div class="settings">
+		<div class="settings uapi-settings">
+			<!--consumerKey: 'Nvw3Wm7v1bN8',-->
+			<!--consumerSecret: 'Tu.yUtCw9ygRQPJFrDpgHurMeWn7q7',-->
+			<!--oauthToken: 'Ugqe53bimpieTA4wZoSPPfWgakL.v5zjRREXl4RJ',-->
+			<!--oauthTokenSecret: 'yRylogtLxZ4a0.gSdGRhRhn443ZVH422cqEVuGTx',-->
+			<!--mainUrl: 'http://alphatest-6347.ucoz.ru/uapi'-->
+			<form class="form-horizontal " data-uapi-options>
+				
+				<div class="form-group">
+					<label for="consumerKey" class="col-sm-2 control-label">Consumer key</label>
+					
+					<div class="col-sm-10">
+						<input id="consumerKey" name="consumerKey" type="text" required class="form-control" placeholder="!!!">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="consumerSecret" class="col-sm-2 control-label">Consumer secret</label>
+					
+					<div class="col-sm-10">
+						<input id="consumerSecret" name="consumerSecret" type="text" required class="form-control" placeholder="!!!">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="oauthToken" class="col-sm-2 control-label">OAuth token</label>
+					
+					<div class="col-sm-10">
+						<input id="oauthToken" name="oauthToken" type="text" required class="form-control" placeholder="!!!">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="oauthTokenSecret" class="col-sm-2 control-label">OAuth token secret</label>
+					
+					<div class="col-sm-10">
+						<input id="oauthTokenSecret" name="oauthTokenSecret" type="text" required class="form-control" placeholder="!!!">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="mainUrl" class="col-sm-2 control-label">Main url</label>
+					
+					<div class="col-sm-10">
+						<input id="mainUrl" name="mainUrl" type="url" required class="form-control" placeholder="!!!">
+					</div>
+				</div>
+				
+				<div class="alert alert-danger" style="display: none" role="alert" data-uapi-error>
+					Ошибка ключей !!!
+				</div>
+				
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-default" disabled>Сохранить</button>
+					</div>
+				</div>
+			
+			</form>
+		
 		</div>
 	</section>
 	
@@ -40,13 +95,14 @@
 	<section class="content-row content-row-ms">
 		<div class="row-ttl">Вопросы/ответы</div>
 		<span class="ms-ttlnote">При возникновении проблем в работе с расширением, обращайтесь с вопросами по адреса support@ucoz.ru</span>
+		
 		<div class="settings">
 			<div class="wrap">
 				
 				<br>
 				Частозадаваемые вопросы и ответы на них будут размещены позже.
 				<br><br><br><br>
-				
+			
 			</div>
 		</div>
 	</section>
@@ -63,5 +119,6 @@
 <script src="/lib/hmac-sha1.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <!--[U-REPOST]-->
+<script src="/pages/options.js"></script>
 </body>
 </html>

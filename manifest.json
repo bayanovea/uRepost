@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	
 	"name": "uRepost",
-	"description": "",
+	"description": "Публикация постов из Ваших любимых групп в соц. сетях прямо на сайт в системе uCoz.",
 	"version": "0.1",
 	
 	"icons": {
