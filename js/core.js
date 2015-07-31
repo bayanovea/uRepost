@@ -7,8 +7,7 @@ chrome.runtime.onMessage.addListener(function (req, sender, cb) {
 		case "vk.repost":
 			var postId = req.postId.replace('post', '');
 			getVK.getPostById(postId, function (data) {
-				var readyData = uTranspiler(data, 'vk');
-				cb(readyData);
+				cb(data);
 			});
 			break;
 		default :

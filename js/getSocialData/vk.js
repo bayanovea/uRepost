@@ -37,7 +37,7 @@ var getVK = {
 				url: me.apiUrl + id + '&extended=1&access_token=' + me.token
 			})
 			.done(function (res) {
-				cb(res);
+				cb(uTranspiler(res, 'vk'));
 			})
 			.fail(function () {
 				cb(null);
