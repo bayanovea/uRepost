@@ -1,19 +1,22 @@
 var Core = (function () {
 	
-	function onUApiOptions(newOption){
-		
-	}
 	
 	function onMessage(req, sender, cb) {
 		switch (req.method) {
-			case "vk.repost":
+			case 'vk.getPost':
 				var postId = req.postId.replace('post', '');
 				getVK.getPostById(postId, function (data) {
-					cb(data);
+					//TODO: Error -----------------^^^^^
+					cb(null, data);
+				});
+				break;
+			case 'uapi.getModules':
+				uAPI.getModules(function (err, data) {
+					cb(err, data);
 				});
 				break;
 			default :
-				cb({data: data});
+				cb(new Error('unknown method'));
 				break;
 		}
 		return true;
@@ -23,7 +26,7 @@ var Core = (function () {
 		for (var key in changes) {
 			var storageChange = changes[key];
 			
-			switch (key){
+			switch (key) {
 				case "uapi_options" :
 					uAPI.init(options);
 					break;
@@ -37,7 +40,7 @@ var Core = (function () {
 		
 		chrome.storage.local.get('uapi_options', function (result) {
 			var options = result['uapi_options'];
-			if (!options) return;
+			if (! options) return;
 			uAPI.init(options);
 		});
 		
