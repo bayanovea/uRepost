@@ -16,9 +16,8 @@ var auth = {
 		var me = this;
 		me.addListeners();
 		me.getAccessToken(function (data) {
-			console.log(data.vkToken);
-			$('.js-token').html(data.vkToken);
-		})
+			me.showToken(data.vkToken);
+		});
 	},
 	
 	addListeners: function() {
@@ -46,6 +45,7 @@ var auth = {
 					if (authTabId === tabId && changeInfo.url && (changeInfo.url.indexOf('access_token=') + 1)) {
 						var token = changeInfo.url.split('access_token=')[1].split('&')[0];
 						me.saveAccessToken(token);
+						me.showToken(token);
 						chrome.tabs.remove(tabId);
 						chrome.tabs.onUpdated.removeListener(tabUpdateListener);
 					}
@@ -53,6 +53,18 @@ var auth = {
 				chrome.tabs.onUpdated.addListener(tabUpdateListener);
 			}
 		);
+	},
+	
+	showToken: function (vkToken) {
+		if (vkToken) {
+			$('.js-token').show();
+			$('.js-token-val').html(vkToken);
+			$('.js-auth').hide();
+		}
+		else {
+			$('.js-token').hide();
+			$('.js-auth').show();
+		}
 	},
 	
 	saveAccessToken: function(token) {
