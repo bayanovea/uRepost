@@ -17,25 +17,23 @@ var uAPI = (function () {
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
 
     function http_build_query(formdata, numeric_prefix, arg_separator) {
-        var key, use_val, use_key, i = 0, tmp_arr = [];
-
-        if (!arg_separator) {
-            arg_separator = '&';
-        }
+        var key, use_val, use_key, i = 0, tmp_arr = [], tmp_formdata = [], ret = '';
 
         for (key in formdata) {
-            use_key = escape(key);
-            use_val = escape((formdata[key].toString()));
-            use_val = use_val.replace(/%20/g, '+');
-
-            if (numeric_prefix && !isNaN(key)) {
-                use_key = numeric_prefix + i;
-            }
-            tmp_arr[i] = use_key + '=' + use_val;
-            i++;
+            tmp_formdata.push({ name: key, value: formdata[key] });
         }
 
-        return tmp_arr.join(arg_separator);
+        tmp_formdata.sort(function(obj1, obj2) {
+            return obj1.name > obj2.name;
+        });
+
+        for(var i = 0; i < tmp_formdata.length; i++) {
+            ret = ret + escape(tmp_formdata[i].name) + "=" + escape(tmp_formdata[i].value) + "&";
+        }
+
+        ret = ret.slice(0, -1);
+
+        return ret;
     }
 
     function init(options) {
@@ -58,6 +56,8 @@ var uAPI = (function () {
             oauthSignature = '',
             url = '',
             urlFor = '';
+
+        console.log(parametrsForUrl);
 
         //parametrs = parametrs.replace('@', '');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
@@ -118,7 +118,7 @@ var uAPI = (function () {
                 oauth_signature_method: _options.sigMethod,
                 oauth_timestamp:        _options.timestamp,
                 oauth_token:            _options.oauthToken,
-                oauth_version:          _options.oauthVersion
+                oauth_version:          _options.oauthVersion,
             };
 
         async.forEachOf(modules,
