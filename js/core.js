@@ -20,8 +20,8 @@ var Core = (function () {
 				break;
 			case 'uapi.getModules':
 				uAPI.getModules(function (err, modules) {
-					if (err.message === 'not init'){
-						window.open(chrome.extension.getURL('pages/options.html'))	
+					if (err && err.message === 'not init'){
+						window.open(chrome.extension.getURL('pages/options.html'));
 					}
 					cb({
 						err: err,
