@@ -15,15 +15,37 @@ var uRepostVK = (function () {
 				
 				$(elBtnTemplate01).appendTo($elPost.find('.post_image:first'))
 					.on('click', function () {
-						var action = {
-							method: 'vk.repost',
-							postId: idPost
-						};
+						async.parallel(
+							{
+								post: function (cb){
+									var action = {
+										method: 'vk.getPost',
+										postId: idPost
+									};
+									chrome.runtime.sendMessage(action, function (res) {
+										cb(res.err, res.post);
+									});
+								},
+								modules: function (cb) {
+									chrome.runtime.sendMessage({method: 'uapi.getModules'}, function (res) {
+										cb(res.err, res.modules);
+									});
+								},
+								tmpl: function (cb) {
+									$.get(chrome.extension.getURL('pages/modal.html'), function (tmpl) {
+										cb(null, tmpl);
+									});
+								}
+							},
+							function (err, results) {
+								if (err) {
+									console.log(err);
+									return;
+								}
+								showPopup(results);
+							}
+						);
 						
-						chrome.runtime.sendMessage(action, function (data) {
-							showPopup(data);
-							console.log(data);
-						});
 					});
 			})
 			.on('mouseleave', 'div.post', function () {
@@ -31,9 +53,8 @@ var uRepostVK = (function () {
 			});
 	};
 	var showPopup = function (data) {
-		$.get(chrome.extension.getURL('pages/modal.html'), function (tmpl) {
-			$('body').append(_.template(tmpl)({data: data}));
-		});
+		$('body').append(_.template(data.tmpl)({post: data.post, modules: data.modules}));
+		$('.js-selectpicker').selectpicker();
 	};
 	
 	return {

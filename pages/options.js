@@ -1,15 +1,17 @@
 var PageOptions = (function () {
 	
+	
+	
 	function fillUApiOptions(cb) {
 		chrome.storage.local.get('uapi_options', function (result) {
-			var 
+			var
 				form = $('[data-uapi-options]')[0],
 				options = result['uapi_options'];
-			if (!options)
+			if (! options)
 				return cb();
 			
-			for (var name in options){
-				$('input[name="'+name+'"]',form).val(options[name]);
+			for (var name in options) {
+				$('input[name="' + name + '"]', form).val(options[name]);
 			}
 			cb();
 		})
@@ -33,7 +35,40 @@ var PageOptions = (function () {
 		});
 	}
 	
+	function joinVK(cb) {
+		
+		var action = {
+			method: 'vk.auth'
+		};
+		
+		chrome.runtime.sendMessage(action, function (res) {
+			if (res.err) {
+				return cb(res.err);
+			}
+		});
+	}
+	
+	function onStorage(changes, namespace){
+		for (var key in changes) {
+			var storageChange = changes[key];
+			
+			switch (key) {
+				case "uapi_options" :
+					break;
+				case "vkToken" :
+					var $elBtn = $('[data-join-vk]');
+					$elBtn.removeClass('btn-default');
+					$elBtn.addClass('btn-success');
+					$elBtn.prop('disabled', true);
+					break;
+			}
+			
+			console.log(storageChange);
+		}
+	}
+	
 	function init() {
+		
 		fillUApiOptions(function () {
 			$(':submit', '[data-uapi-options]').removeAttr('disabled');
 		});
@@ -67,6 +102,37 @@ var PageOptions = (function () {
 				return event.preventDefault();
 			});
 		
+		$('[data-join-vk]')
+			.on('click', function () {
+				var $elBtn = $(this);
+				joinVK(function (result) {
+					if (result) {
+						$elBtn.removeClass('btn-default');
+						$elBtn.addClass('btn-success');
+						$elBtn.prop('disabled', true);
+					} else {
+						$elBtn.removeClass('btn-success');
+						$elBtn.addClass('btn-default');
+						$elBtn.removeAttr('disabled');
+					}
+				});
+			});
+		
+		chrome.storage.onChanged.addListener(onStorage);
+		
+		chrome.storage.local.get('vkToken', function (result) {
+			var $elBtn = $('[data-join-vk]');
+			var token = result['vkToken'];
+			if ( token) {
+				$elBtn.removeClass('btn-default');
+				$elBtn.addClass('btn-success');
+				$elBtn.prop('disabled', true);
+			}else{
+				$elBtn.removeClass('btn-success');
+				$elBtn.addClass('btn-default');
+				$elBtn.removeAttr('disabled');
+			}
+		});
 	}
 	
 	return {

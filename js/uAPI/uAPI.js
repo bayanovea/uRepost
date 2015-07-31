@@ -12,7 +12,8 @@ var uAPI = (function () {
             oauthNonce: CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
             timestamp: Math.floor(Date.now() / 1000),
             sigMethod: 'HMAC-SHA1',
-            oauthVersion: '1.0'
+            oauthVersion: '1.0',
+            mainUrl: 'http://urepost.ucoz.net/uapi'
         },
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
 
@@ -83,7 +84,7 @@ var uAPI = (function () {
     };
 
     function getModules(cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         var
             modules = [
@@ -152,7 +153,7 @@ var uAPI = (function () {
     };
 
     function getCategories(module, cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
@@ -189,7 +190,7 @@ var uAPI = (function () {
     }
 
     function createPost(module, _parametrs, cb) {
-        if (!_isInit) throw new Error('not init');
+        if (!_isInit) return cb(new Error('not init'));
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {

@@ -32,3 +32,6 @@
 	border-radius: 6px;
 	background: #fff;
 }
+.urepost-modal label {
+	display: block;
+}
