@@ -5,7 +5,7 @@ var uTranspiler = (function () {
 	var ut = {
 		
 		vk: function (data) {
-			var text = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="http://vk.com/$1" target="_blank>$2</a>');
+			var text = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>');
 			var newData = {
 				title: 'Some Title',
 				content: text
