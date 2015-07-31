@@ -13,7 +13,8 @@ var uAPI = (function () {
             timestamp: Math.floor(Date.now() / 1000),
             sigMethod: 'HMAC-SHA1',
             oauthVersion: '1.0'
-        };
+        },
+        _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
 
     function http_build_query(formdata, numeric_prefix, arg_separator) {
         var key, use_val, use_key, i = 0, tmp_arr = [];
@@ -50,21 +51,21 @@ var uAPI = (function () {
         var
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
-        //parametrs2 = parametrs,
+            parametrsForUrl = http_build_query(parametrs),
+            //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
             oauthSignature = '',
-            parametrsForUrl = '',
             url = '',
             urlFor = '';
 
         //parametrs = parametrs.replace('@', '');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
-            encodeURIComponent(http_build_query(parametrs).replace('+', '%20'));
+            encodeURIComponent(parametrsForUrl.replace('+', '%20'));
 
         hashKey = _options.consumerSecret + '&' + _options.oauthTokenSecret;
         oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
-        parametrsForUrl = http_build_query(parametrs);
+
 
         url = (method === 'GET' || method === 'DELETE')
             ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
@@ -73,7 +74,7 @@ var uAPI = (function () {
         $.ajax({
             method: method,
             url: url,
-            data: (method === 'POST') ? parametrs : '',
+            data: (method === 'POST') ? parametrsForUrl : '',
         }).error(function (err) {
             cb(err);
         }).success(function (data) {
@@ -129,7 +130,7 @@ var uAPI = (function () {
                         return cb(err);
                     }
 
-                    if (data.error.msg !== "Материалов удовлетворяющих критериям запроса не найдено") {
+                    if (data.error.code) {
                         modules[key].error = data.error;
                     }
 
@@ -153,7 +154,7 @@ var uAPI = (function () {
     function getCategories(module, cb) {
         if (!_isInit) throw new Error('not init');
 
-        if ( ['blog', 'board', 'dir', 'publ', 'load', 'news'].indexOf(module) !== -1 ) {
+        if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
                 oauth_consumer_key:     _options.consumerKey,
                 oauth_nonce:            _options.oauthNonce,
@@ -183,12 +184,41 @@ var uAPI = (function () {
             });
         }
         else {
-
+            cb('undefined_module_name');
         }
     }
 
-    function createPost(module, parametrs) {
+    function createPost(module, _parametrs, cb) {
         if (!_isInit) throw new Error('not init');
+
+        if ( _allowedModules.indexOf(module) !== -1 ) {
+            var parametrs = {
+                oauth_consumer_key:     _options.consumerKey,
+                oauth_nonce:            _options.oauthNonce,
+                oauth_signature_method: _options.sigMethod,
+                oauth_timestamp:        _options.timestamp,
+                oauth_token:            _options.oauthToken,
+                oauth_version:          _options.oauthVersion,
+
+                category:               _parametrs.category,
+                title:                  _parametrs.title,
+                message:                _parametrs.message
+            };
+
+            _request('/' + module +  '/', 'POST', parametrs, _options, function (err, data) {
+                if (err) {
+                    return cb(err);
+                }
+
+                console.log(err);
+                console.log( data );
+
+                cb(null, data);
+            });
+        }
+        else {
+            cb('undefined_module_name');
+        }
     };
 
     function validateOptions(options, cb) {
@@ -226,24 +256,25 @@ var test_uAPI = {
             consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
             oauthToken: '1 1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
             oauthTokenSecret: '2Nnhxzybl4vJISVZtDpdbzEfEMGV23wL9.3wSrxj',
-            mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo '
+            mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo'
         }, function(err, data) {
             console.log(err);
             console.log(data);
         });*/
 
-        uAPI.init({
-            consumerKey: 'fgswGdw4ts35dsgQQQ',
-            consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
-            oauthToken: '1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
-            oauthTokenSecret: '2Nnhxzybl4vJISVZtDpdbzEfEMGV23wL9.3wSrxj',
-            mainUrl: 'http://urepost.ucoz.net/uapi'
-        });
         uAPI.getModules(function(err, data) {
-            //console.log(data);
+            console.log(data);
         });
-        uAPI.getCategories('publ', function(err, data) {
-            //console.log(data);
-        });
+        /*uAPI.getCategories('publ', function(err, data) {
+        });*/
+
+        /*uAPI.createPost('publ', {
+            category: "1",
+            title: "yo",
+            message: "yoyo"
+        }, function(err, data) {
+            console.log(err);
+            console.log(data);
+        })*/
     }
 };

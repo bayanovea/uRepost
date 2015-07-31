@@ -10,14 +10,20 @@ var Core = (function () {
 				break;
 			case 'vk.getPost':
 				var postId = req.postId.replace('post', '');
-				getVK.getPostById(postId, function (data) {
+				getVK.getPostById(postId, function (post) {
 					//TODO: Error -----------------^^^^^
-					cb(null, data);
+					cb({
+						err: null,
+						post: post
+					});
 				});
 				break;
 			case 'uapi.getModules':
-				uAPI.getModules(function (err, data) {
-					cb(err, data);
+				uAPI.getModules(function (err, modules) {
+					cb({
+						err: err,
+						modules: modules
+					});
 				});
 				break;
 			default :

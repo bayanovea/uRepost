@@ -25,7 +25,7 @@
 			"js/getSocialData/vk.js", 
 			"js/authSocial/vk.js",
 			"js/uTranspiler.js",
-			"js/uAPI/app.js",
+			"js/uAPI/uAPI.js",
 			//CORE
 			"js/core.js" 
 		]
@@ -48,11 +48,20 @@
 				"http://vk.com/*",
 				"https://vk.com/*"
 			],
-			"css": [ "styles/css/urepost-vk.css" ],
+			"css": [
+				"styles/css/urepost-vk.css",
+				"lib/bootstrap/css/bootstrap.min.css",
+				"lib/bootstrap/css/bootstrap-theme.min.css",
+				"lib/bootstrap-selector/css/bootstrap-select.min.css"
+			],
+			
 			"js": [
 				"lib/jquery-2.1.4.min.js",
 				"lib/lodash.min.js",
-				"js/urepost-vk.js"
+				"lib/async.min.js",
+				"js/urepost-vk.js",
+				"lib/bootstrap/js/bootstrap.min.js",
+				"lib/bootstrap-selector/js/bootstrap-select.min.js"
 			]
 		}
 	],
