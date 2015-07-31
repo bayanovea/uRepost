@@ -15,7 +15,39 @@ var uAPI = (function () {
             oauthVersion: '1.0',
             mainUrl: 'http://urepost.ucoz.net/uapi'
         },
-        _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'];
+        _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'],
+        modulesRels = {
+            blog: {
+                category: "category",
+                title: "title",
+                message: "message"
+            },
+            board: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            dir: {
+                category: "category",
+                title: "title",
+                content: "description"
+            },
+            publ: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            load: {
+                category: "category",
+                title: "title",
+                content: "message"
+            },
+            news: {
+                category: "category",
+                title: "title",
+                content: "message"
+            }
+        };
 
     function http_build_query(formdata, numeric_prefix, arg_separator) {
         var key, use_val, use_key, i = 0, tmp_arr = [], tmp_formdata = [], ret = '';
@@ -194,17 +226,28 @@ var uAPI = (function () {
 
         if ( _allowedModules.indexOf(module) !== -1 ) {
             var parametrs = {
-                oauth_consumer_key:     _options.consumerKey,
-                oauth_nonce:            _options.oauthNonce,
-                oauth_signature_method: _options.sigMethod,
-                oauth_timestamp:        _options.timestamp,
-                oauth_token:            _options.oauthToken,
-                oauth_version:          _options.oauthVersion,
+                    oauth_consumer_key:     _options.consumerKey,
+                    oauth_nonce:            _options.oauthNonce,
+                    oauth_signature_method: _options.sigMethod,
+                    oauth_timestamp:        _options.timestamp,
+                    oauth_token:            _options.oauthToken,
+                    oauth_version:          _options.oauthVersion,
+                },
+                __parametrs = {};
 
-                category:               _parametrs.category,
-                title:                  _parametrs.title,
-                message:                _parametrs.message
-            };
+            if(_parametrs.category) {
+                __parametrs[modulesRels[module].category] = _parametrs.category;
+            }
+            if(_parametrs.title) {
+                __parametrs[modulesRels[module].title] = _parametrs.title;
+            }
+            if(_parametrs.content) {
+                __parametrs[modulesRels[module].content] = _parametrs.content;
+            }
+
+            parametrs = _.defaults(parametrs, __parametrs);
+
+            console.log(parametrs);
 
             _request('/' + module +  '/', 'POST', parametrs, _options, function (err, data) {
                 if (err) {
@@ -262,20 +305,13 @@ var test_uAPI = {
             console.log(err);
             console.log(data);
         });*/
-
-        uAPI.getModules(function(err, data) {
-            console.log(data);
-        });
-        /*uAPI.getCategories('publ', function(err, data) {
-        });*/
-
-        /*uAPI.createPost('publ', {
+        uAPI.createPost('publ', {
             category: "1",
             title: "yo",
             message: "yoyo"
         }, function(err, data) {
             console.log(err);
             console.log(data);
-        })*/
+        })
     }
 };
