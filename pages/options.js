@@ -1,15 +1,19 @@
 var PageOptions = (function () {
 	
+	function joinVK(cb){
+		
+	}
+	
 	function fillUApiOptions(cb) {
 		chrome.storage.local.get('uapi_options', function (result) {
-			var 
+			var
 				form = $('[data-uapi-options]')[0],
 				options = result['uapi_options'];
-			if (!options)
+			if (! options)
 				return cb();
 			
-			for (var name in options){
-				$('input[name="'+name+'"]',form).val(options[name]);
+			for (var name in options) {
+				$('input[name="' + name + '"]', form).val(options[name]);
 			}
 			cb();
 		})
@@ -67,6 +71,10 @@ var PageOptions = (function () {
 				return event.preventDefault();
 			});
 		
+		$('[data-join-vk]')
+			.on('click', function () {
+				
+			});
 	}
 	
 	return {
