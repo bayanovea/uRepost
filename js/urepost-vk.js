@@ -88,7 +88,7 @@ var uRepostVK = (function () {
 	};
 	var closePopup = function ($popup) {
 		$popup.fadeOut(300, function () {
-			$el.remove();
+			$popup.remove();
 		});
 	};
 	var showCategories = function (categories) {
