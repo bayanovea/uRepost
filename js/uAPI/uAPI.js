@@ -20,7 +20,7 @@ var uAPI = (function () {
         // Вза
         modulesRels = {
             blog:   { content: "message" },
-            board:  { content: "message" },
+            board:  { content: "description" },
             dir:    { content: "description" },
             publ:   { content: "message" },
             load:   { content: "message" },
@@ -78,7 +78,6 @@ var uAPI = (function () {
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
             parametrsForUrl = http_build_query(parametrs),
-        //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
             oauthSignature = '',
@@ -103,6 +102,10 @@ var uAPI = (function () {
         }).error(function (err) {
             cb(err);
         }).success(function (data) {
+            if (data.error) {
+                return cb(data.error);
+            }
+
             cb(null, data);
         });
     };
@@ -237,6 +240,10 @@ var uAPI = (function () {
                 __parametrs[modulesRels[module].content] = _parametrs.content;
             }
 
+            if (module === 'blog' || module === 'publ') {
+                __parametrs.description = _parametrs.content.slice(0, 1500);
+            }
+
             parametrs = _.defaults(parametrs, __parametrs);
 
             _request('/' + module + '/', 'POST', parametrs, _options, function (err, data) {
@@ -253,21 +260,32 @@ var uAPI = (function () {
     };
 
     function validateOptions(options, cb) {
-
         var parametrs = {
-            oauth_consumer_key:     options.consumerKey,
-            oauth_nonce:            CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
-            oauth_signature_method: 'HMAC-SHA1',
-            oauth_timestamp:        Math.floor(Date.now() / 1000),
-            oauth_token:            options.oauthToken,
-            oauth_version:          '1.0'
-        };
+                oauth_consumer_key:     options.consumerKey,
+                oauth_nonce:            CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
+                oauth_signature_method: 'HMAC-SHA1',
+                oauth_timestamp:        Math.floor(Date.now() / 1000),
+                oauth_token:            options.oauthToken,
+                oauth_version:          '1.0'
+            },
+            options = _options;
 
-        _request('/users/', 'get', parametrs, options, function(err, data) {
+        options.mainUrl = 'http://uapi.ucoz.com';
+
+        _request('/accounts/GetUserInfo/', 'get', parametrs, options, function(err, data) {
             if (err) {
-                cb(err);
+                if (err["responseJSON"].error.code === "INVALID_CONSUMER_KEY") {
+                    cb(err['responseJSON'].error);
+                }
+                else {
+                    cb(err);
+                }
             }
-            cb(null, data);
+            if (data.error && data.error.code === "UNKNOWN_TOKEN") {
+                cb(data.error);
+            }
+
+            cb(null, true);
         });
     };
 
@@ -283,22 +301,19 @@ var uAPI = (function () {
 var test_uAPI = {
     test1: function () {
         /*uAPI.validateOptions({
-         consumerKey: 'fgswGdw4ts35dsgQQQ',
-         consumerSecret: 'tWVu5BxwnOCD44eWqMZJPUq3q5iycM',
-         oauthToken: '1 1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
-         oauthTokenSecret: '2Nnhxzybl4vJISVZtDpdbzEfEMGV23wL9.3wSrxj',
-         mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo'
+            consumerKey: 'fgswGdw4ts35dsgQQQ',
+            oauthToken: '1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
+            mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo'
          }, function(err, data) {
-         console.log(err);
-         console.log(data);
+
          });*/
-        uAPI.createPost('blog', {
-            category: "1",
-            title: 'Хgffп!!!!авпа',
-            content: '111 <img class="emoji" alt="&#128564;" src="/images/emoji/D83DDE34.png"> 222'
+        /*uAPI.createPost('board', {
+            category: "2",
+            title: 'title2',
+            content: ''
         }, function(err, data) {
             console.log(err);
             console.log(data);
-        })
+        })*/
     }
 };

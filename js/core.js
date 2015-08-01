@@ -37,10 +37,10 @@ var Core = (function () {
 				break;
 			case 'vk.getPost':
 				var postId = req.postId.replace('post', '');
-				getVK.getPostById(postId, function (post) {
+				getVK.getPostById(postId, function (err, post) {
 					//TODO: Error -----------------^^^^^
 					cb({
-						err: null,
+						err: err,
 						post: post
 					});
 				});

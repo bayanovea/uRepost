@@ -15,16 +15,13 @@ var authVK = {
 	init: function() {
 		var me = this;
 		me.addListeners();
-		me.getAccessToken(function (data) {
-			me.showToken(data.vkToken);
-		});
 	},
 	
 	addListeners: function() {
 		var me = this;
 		$(document)
 			.on('click', '.js-auth', function () {
-				me.auth(me.showToken);
+				me.auth();
 			});
 	},
 	
@@ -54,28 +51,11 @@ var authVK = {
 		);
 	},
 	
-	showToken: function (vkToken) {
-		if (vkToken) {
-			$('.js-token').show();
-			$('.js-token-val').html(vkToken);
-			$('.js-auth').hide();
-		}
-		else {
-			$('.js-token').hide();
-			$('.js-auth').show();
-		}
-	},
-	
 	saveAccessToken: function(token, cb) {
 		var me = this;
 		me.db.set({vkToken: token}, function () {
-			cb(token);
+			cb && cb(token);
 		});
-	},
-	
-	getAccessToken: function(cb) {
-		var me = this;
-		me.db.get('vkToken', cb);
 	}
 	
 };
