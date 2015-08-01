@@ -80,16 +80,6 @@ var uAPI = (function () {
             url = '',
             urlFor = '';
 
-        /*$request_url = $main_url.mb_strtolower(trim($request_url));
-        $method = mb_strtoupper($method);
-        $basestring = str_replace('+', '%20', http_build_query($parametrs));
-        $basestring = $method.'&'.urlencode($request_url).'&'.urlencode($basestring);
-        $hash_key = $consumer_secret.'&'.$oauth_token_secret;
-        $oauth_signature = urlencode(trim(base64_encode(hash_hmac('sha1', $basestring, $hash_key, true))));
-        $parametrs_forurl = http_build_query($parametrs);
-        $url = $request_url.'?oauth_signature='.$oauth_signature;
-        $url_for = $request_url.'?'.$parametrs_forurl.'&oauth_signature='.$oauth_signature;*/
-
         //parametrs = parametrs.replace('@', '');
         basestring = http_build_query(parametrs).replace(/\+/g, '%20');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' + encodeURIComponent(basestring);
