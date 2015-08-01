@@ -8,7 +8,7 @@ var uAPI = (function () {
     var
         // Индикатор инициализации
         _isInit = false,
-        // Глобальные настройки
+        // Глобальные настройки uAPI
         _options = {
             oauthNonce:   CryptoJS.enc.Base64.stringify(CryptoJS.MD5('123')),
             timestamp:    Math.floor(Date.now() / 1000),
@@ -17,7 +17,7 @@ var uAPI = (function () {
         },
         // Все модули, куда имеет смысл поститься
         _allowedModules = ['blog', 'board', 'dir', 'publ', 'load', 'news'],
-        // Вза
+        // Соответсвие полей в uAPI и транспиллера
         modulesRels = {
             blog:   { content: "message" },
             board:  { content: "description" },
@@ -28,17 +28,28 @@ var uAPI = (function () {
         };
 
     /**
-     * Build query params with sort to string
+     * Инициализация
      *
-     * @param formdata
-     * @param numeric_prefix
-     * @param arg_separator
+     * @param {object} options
+     */
+    function init(options) {
+        // Индикатор инициализации
+        _isInit = true;
+        // Склеиваем настройки модуля и пользовательские настройки приложения
+        _options = _.defaults(options, _options);
+    };
+
+    /**
+     * Генерация строки по query параметрам с сортировкой
+     *
+     * @param {object} formdata
      * @returns {string}
      */
-    function http_build_query(formdata, numeric_prefix, arg_separator) {
+    function http_build_query(formdata) {
         var formdataArr = [],
-            ret = '';
+            result = '';
 
+        // Объект преобразуем в массив нужного вида для сортировки
         for (var key in formdata) {
             formdataArr.push({
                 name: key,
@@ -46,34 +57,42 @@ var uAPI = (function () {
             });
         }
 
+        // Сортируем массив
         formdataArr.sort(function(obj1, obj2) {
             return obj1.name > obj2.name;
         });
 
+        // Составляем строку по query параметрам
         for(var i = 0; i < formdataArr.length; i++) {
-            ret = ret + encodeURIComponent(formdataArr[i].name) + "=" + encodeURIComponent(formdataArr[i].value) + "&";
+            result = result + encodeURIComponent(formdataArr[i].name) + "=" + encodeURIComponent(formdataArr[i].value) + "&";
         }
 
-        ret = ret.slice(0, -1)
+        // Убираем последний & и заменяем лишние символы, которые encodeURIComponent не энкодид
+        return result.slice(0, -1)
             .replace(/\!/g, '%21')
             .replace(/\~/g, '%7E')
             .replace(/\'/g, '%27')
             .replace(/\(/g, '%28')
             .replace(/\)/g, '%29');
-
-        return ret;
     }
 
-    function init(options) {
-        _isInit = true;
-        _options = _.defaults(options, _options);
-    };
-
+    /**
+     * Запрос к uAPI
+     *
+     * @param {string} requestUrl
+     * @param {string} method
+     * @param {object} parametrs
+     * @param {object} _options
+     * @param {function} cb
+     * @private
+     */
     function _request(requestUrl, method, parametrs, _options, cb) {
+        // Метод запроса по умолчанию - GET
         if (method === undefined) {
             method = 'GET';
         }
 
+        // Параметры для запроса
         var
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
@@ -84,10 +103,8 @@ var uAPI = (function () {
             url = '',
             urlFor = '';
 
-        //parametrs = parametrs.replace('@', '');
         basestring = http_build_query(parametrs).replace(/\+/g, '%20');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' + encodeURIComponent(basestring);
-
         hashKey = _options.consumerSecret + '&' + _options.oauthTokenSecret;
         oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
 
@@ -95,51 +112,45 @@ var uAPI = (function () {
             ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
             : requestUrl + '?oauth_signature=' + oauthSignature;
 
+        // Запрос на uAPI
         $.ajax({
             method: method,
             url: url,
             data: (method === 'POST') ? parametrsForUrl : '',
-        }).error(function (err) {
-            cb(err);
-        }).success(function (data) {
-            if (data.error) {
-                return cb(data.error);
-            }
+        })
+            .error(function (err) {
+                cb(err);
+            })
+            .success(function (data) {
+                if (data.error) {
+                    return cb(data.error);
+                }
+                cb(null, data);
+            });
 
-            cb(null, data);
-        });
-    };
+        };
 
+    /**
+     * Получить все активные модули
+     *
+     * @param {function }cb
+     * @returns {*}
+     */
     function getModules(cb) {
         if (!_isInit) return cb(new Error('not init'));
 
+
         var
+            // Соотвествие кода и названия доступных модулей
             modules = [
-                {
-                    code: "blog",
-                    name: "Блог"
-                },
-                {
-                    code: "board",
-                    name: "Доска объявлений"
-                },
-                {
-                    code: "dir",
-                    name: "Каталог сайтов"
-                },
-                {
-                    code: "publ",
-                    name: "Каталог статей"
-                },
-                {
-                    code: "load",
-                    name: "Каталог файлов"
-                },
-                {
-                    code: "news",
-                    name: "Новости сайта"
-                }
+                { code: "blog",  name: "Блог" },
+                { code: "board", name: "Доска объявлений" },
+                { code: "dir",   name: "Каталог сайтов"},
+                { code: "publ",  name: "Каталог статей"},
+                { code: "load",  name: "Каталог файлов"},
+                { code: "news",  name: "Новости сайта" }
             ],
+            // Параметры
             parametrs = {
                 oauth_consumer_key:     _options.consumerKey,
                 oauth_nonce:            _options.oauthNonce,
@@ -149,11 +160,12 @@ var uAPI = (function () {
                 oauth_version:          _options.oauthVersion,
             };
 
+        // Обходим все модули
         async.forEachOf(modules,
-            // Iterator
+            // Итератор
             function (item, key, cb) {
-
-                _request('/' + item.code +  '/', 'get', parametrs, _options, function (err, data) {
+                // Делаем запрос по отдельному модулю
+                _request('/' + item.code + '/', 'get', parametrs, _options, function (err, data) {
                     if (err) {
                         return cb(err);
                     }
@@ -164,7 +176,6 @@ var uAPI = (function () {
 
                     cb(null, modules);
                 });
-
             },
             // Callback
             function (err) {
@@ -179,6 +190,13 @@ var uAPI = (function () {
         return;
     };
 
+    /**
+     * Получить доступные категории модуля
+     *
+     * @param module
+     * @param cb
+     * @returns {*}
+     */
     function getCategories(module, cb) {
         if (!_isInit) return cb(new Error('not init'));
 
@@ -216,6 +234,14 @@ var uAPI = (function () {
         }
     }
 
+    /**
+     * Создать запись в модуле
+     *
+     * @param module
+     * @param _parametrs
+     * @param cb
+     * @returns {*}
+     */
     function createPost(module, _parametrs, cb) {
         if (!_isInit) return cb(new Error('not init'));
 
@@ -259,6 +285,12 @@ var uAPI = (function () {
         }
     };
 
+    /**
+     * Валидация абстрактных данных приложения uAPI
+     *
+     * @param options
+     * @param cb
+     */
     function validateOptions(options, cb) {
         var parametrs = {
                 oauth_consumer_key:     options.consumerKey,
@@ -315,5 +347,9 @@ var test_uAPI = {
             console.log(err);
             console.log(data);
         })*/
+        uAPI.getCategories('publ', function(err, data) {
+            console.log(err);
+            console.log(data);
+        });
     }
 };
