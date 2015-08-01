@@ -68,7 +68,8 @@ var uRepostVK = (function () {
 			.on('click', '.js-add-post', function () {
 				var module = $('.js-modules').val();
 				var data = {};
-				$('.js-data-param', '.js-urepost-modal').each(function () {
+				var $popup = $('.js-urepost-modal');
+				$('.js-data-param', $popup).each(function () {
 					data[$(this).attr('name')] = $(this).val();
 				});
 				chrome.runtime.sendMessage({method: 'uapi.createPost', module: module, data: data}, function (res) {
@@ -76,7 +77,7 @@ var uRepostVK = (function () {
 						console.log(res.err);
 						return;
 					}
-					console.log('ok!!!!!');
+					closePopup($popup);
 				});
 			});
 	};
