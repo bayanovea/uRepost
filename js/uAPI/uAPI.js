@@ -59,6 +59,31 @@ var uAPI = (function () {
         return ret;
     }
 
+    function http_build_query_escape(formdata, numeric_prefix, arg_separator) {
+        var formdataArr = [],
+            ret = '';
+
+        for (var key in formdata) {
+            formdataArr.push({
+                name: key,
+                value: formdata[key]
+            });
+        }
+
+        formdataArr.sort(function(obj1, obj2) {
+            return obj1.name > obj2.name;
+        });
+
+        for(var i = 0; i < formdataArr.length; i++) {
+            ret = ret + escape(formdataArr[i].name) + "=" + escape(formdataArr[i].value) + "&";
+        }
+
+        ret = ret.slice(0, -1);
+
+        return ret;
+    }
+
+
     function init(options) {
         _isInit = true;
         _options = _.defaults(options, _options);
@@ -72,7 +97,8 @@ var uAPI = (function () {
         var
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
-            parametrsForUrl = http_build_query(parametrs),
+            parametrsForUrl = http_build_query_escape(parametrs),
+            parametrsForUrl2 = http_build_query(parametrs),
         //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
@@ -80,7 +106,15 @@ var uAPI = (function () {
             url = '',
             urlFor = '';
 
-        console.log(parametrsForUrl);
+        /*$request_url = $main_url.mb_strtolower(trim($request_url));
+        $method = mb_strtoupper($method);
+        $basestring = str_replace('+', '%20', http_build_query($parametrs));
+        $basestring = $method.'&'.urlencode($request_url).'&'.urlencode($basestring);
+        $hash_key = $consumer_secret.'&'.$oauth_token_secret;
+        $oauth_signature = urlencode(trim(base64_encode(hash_hmac('sha1', $basestring, $hash_key, true))));
+        $parametrs_forurl = http_build_query($parametrs);
+        $url = $request_url.'?oauth_signature='.$oauth_signature;
+        $url_for = $request_url.'?'.$parametrs_forurl.'&oauth_signature='.$oauth_signature;*/
 
         //parametrs = parametrs.replace('@', '');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
@@ -97,7 +131,7 @@ var uAPI = (function () {
         $.ajax({
             method: method,
             url: url,
-            data: (method === 'POST') ? parametrsForUrl : '',
+            data: (method === 'POST') ? parametrsForUrl2 : '',
         }).error(function (err) {
             cb(err);
         }).success(function (data) {
@@ -292,8 +326,8 @@ var test_uAPI = {
          });*/
         uAPI.createPost('blog', {
             category: "1",
-            title: "yo",
-            content: "yoyo444"
+            title: 'fsdf!!!',
+            content: "cont!"
         }, function(err, data) {
             console.log(err);
             console.log(data);
