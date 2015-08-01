@@ -62,6 +62,7 @@ var uRepostVK = (function () {
 			})
 			.on('change', '.js-modules', function () {
 				var module = $(this).val();
+				disableBtn();
 				$('.js-categories', $(this).closest('.js-urepost-modal')).attr('disabled', 'disabled');
 				chrome.runtime.sendMessage({method: 'uapi.getCategories', module: module}, function (res) {
 					if (res.err) {
@@ -70,6 +71,7 @@ var uRepostVK = (function () {
 						return;
 					}
 					showCategories(res.categories);
+					enableBtn();
 				});
 			})
 			.on('click', '.js-add-post', function () {
