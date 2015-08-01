@@ -135,3 +135,9 @@
 	box-shadow: none;
 	opacity: .65;
 }
+
+.urepost-err {
+	margin-top: 15px;
+	background-color: #f2dede;
+	padding: 15px;
+}
