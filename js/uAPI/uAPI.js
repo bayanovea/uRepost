@@ -125,6 +125,9 @@ var uAPI = (function () {
                 });
             })
             .success(function (data) {
+                if (data.error) {
+                    return cb(data.error, data);
+                }
                 cb(null, data);
             });
 
