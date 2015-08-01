@@ -27,7 +27,6 @@ var Core = (function () {
 		});
 	}
 	
-	
 	function onMessage(req, sender, cb) {
 		switch (req.method) {
 			case 'vk.auth':
@@ -43,6 +42,11 @@ var Core = (function () {
 						err: err,
 						post: post
 					});
+				});
+				break;
+			case 'uapi.validation':
+				uAPI.validateOptions(req.options,function(err){
+					cb(err);
 				});
 				break;
 			case 'uapi.getModules':

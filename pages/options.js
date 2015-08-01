@@ -21,14 +21,12 @@ var PageOptions = (function () {
 	}
 	
 	function validationUApiOption(options, cb) {
-		var
-			valid = true;
-		//TODO :
-		if (valid) {
+		chrome.runtime.sendMessage({method: 'uapi.validation', options: options}, function (res) {
+			if (res.err) {
+				return cb(err);
+			}
 			cb(null);
-		} else {
-			cb(true);
-		}
+		});
 	}
 	
 	function saveUApiOptions(options, cb) {
@@ -104,10 +102,10 @@ var PageOptions = (function () {
 				if (options.mainUrl.indexOf('http://') !== 0 && options.mainUrl.indexOf('https://') !== 0) {
 					options.mainUrl = 'http://' + options.mainUrl;
 				}
-				if (options.mainUrl.slice(-1) === '/') {
-					options.mainUrl = options.mainUrl.slice(0, -1);
+				if (options.mainUrl.slice(- 1) === '/') {
+					options.mainUrl = options.mainUrl.slice(0, - 1);
 				}
-				if ( ! /.*\/uapi$/.test(options.mainUrl)) {
+				if (! /.*\/uapi$/.test(options.mainUrl)) {
 					options.mainUrl += '/uapi';
 				}
 				$('input[name="mainUrl"]', this).val(options.mainUrl);
@@ -116,7 +114,8 @@ var PageOptions = (function () {
 				
 				validationUApiOption(options, function (err) {
 					if (err) {
-						$('[data-uapi-error]').show();
+						$('[data-uapi-error]').show().html(err);
+						console.log(err);
 						return;
 					}
 					$('[data-uapi-error]').hide();
