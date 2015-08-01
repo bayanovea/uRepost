@@ -102,6 +102,10 @@ var uAPI = (function () {
         }).error(function (err) {
             cb(err);
         }).success(function (data) {
+            if (data.error) {
+                return cb(data.error);
+            }
+
             cb(null, data);
         });
     };
@@ -296,17 +300,17 @@ var uAPI = (function () {
 
 var test_uAPI = {
     test1: function () {
-        uAPI.validateOptions({
+        /*uAPI.validateOptions({
             consumerKey: 'fgswGdw4ts35dsgQQQ',
             oauthToken: '1Jj3BeBE4ZVesZ2jj4deztNiX3C93juh52RNSCss',
             mainUrl: 'http://uapi.ucoz.com/accounts/GetUserInfo'
          }, function(err, data) {
 
-         });
+         });*/
         /*uAPI.createPost('board', {
             category: "2",
             title: 'title2',
-            content: 'contentcontentcontentcontentcontent2'
+            content: ''
         }, function(err, data) {
             console.log(err);
             console.log(data);
