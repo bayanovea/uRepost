@@ -125,9 +125,6 @@ var uAPI = (function () {
                 });
             })
             .success(function (data) {
-                if (data.error) {
-                    return cb(data.error);
-                }
                 cb(null, data);
             });
 
@@ -170,7 +167,7 @@ var uAPI = (function () {
                 // Делаем запрос по отдельному модулю
                 _request('/' + item.code + '/', 'get', parametrs, _options, function (err, data) {
                     if (err && err.ajax) {
-                        return cb(err, data);
+                        return cb(err);
                     }
 
                     if (data.error && data.error.code) {
