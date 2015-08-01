@@ -64,6 +64,20 @@ var uRepostVK = (function () {
 					}
 					showCategories(res.categories);
 				});
+			})
+			.on('click', '.js-add-post', function () {
+				var module = $('.js-modules').val();
+				var data = {};
+				$('.js-data-param', '.js-urepost-modal').each(function () {
+					data[$(this).attr('name')] = $(this).val();
+				});
+				chrome.runtime.sendMessage({method: 'uapi.createPost', module: module, data: data}, function (res) {
+					if (res.err) {
+						console.log(res.err);
+						return;
+					}
+					console.log('ok!!!!!');
+				});
 			});
 	};
 	var showPopup = function (data) {
@@ -83,6 +97,7 @@ var uRepostVK = (function () {
 			options += '<option value="' + category.id + '">' + category.name + '</option>';
 		});
 		$('.js-categories').html(options).removeAttr('disabled');
+		$('.js-add-post').removeAttr('disabled');
 	};
 	
 	return {
