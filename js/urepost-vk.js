@@ -38,16 +38,19 @@ var uRepostVK = (function () {
 								tmpl: function (cb) {
 									$.get(chrome.extension.getURL('pages/modal.html'), function (tmpl) {
 										cb(null, tmpl);
+									})
+									.fail(function() {
+										cb(new Error('can not get popup template'), null);
 									});
 								}
 							},
 							function (err, results) {
+								endLoading($icon);
 								if (err) {
 									console.log(err);
 									showMessage('Возникла ошибка', 'error');
 									return;
 								}
-								endLoading($icon);
 								showPopup(results);
 							}
 						);
@@ -122,8 +125,12 @@ var uRepostVK = (function () {
 		$('.js-add-post').attr('disabled', 'disabled');
 	};
 	var showMessage = function (text, status) {
+		var $modal = $('.js-urepost-modal-content');
+		if ( ! $modal.length) {
+			return alert(text);
+		}
 		var $mess = $('<div class="urepost-modal-message urepost-modal-message--' + status + '">' + text + '</div>');
-		$mess.appendTo('.js-urepost-modal-content');
+		$mess.appendTo($modal);
 		setTimeout(function () {
 			$mess.fadeOut(300, function () {
 				$mess.remove();
