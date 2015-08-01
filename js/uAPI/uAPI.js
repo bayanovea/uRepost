@@ -226,10 +226,10 @@ var uAPI = (function () {
                 __parametrs = {};
 
             if(_parametrs.category) {
-                __parametrs[category] = _parametrs.category;
+                __parametrs.category = _parametrs.category;
             }
             if(_parametrs.title) {
-                __parametrs[title] = _parametrs.title;
+                __parametrs.title = _parametrs.title;
             }
             if(_parametrs.content) {
                 __parametrs[modulesRels[module].content] = _parametrs.content;
