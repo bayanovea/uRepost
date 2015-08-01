@@ -23,6 +23,7 @@ var Core = (function () {
 					if (err && err.message === 'not init'){
 						window.open(chrome.extension.getURL('pages/options.html'));
 					}
+					
 					cb({
 						err: err,
 						modules: modules
@@ -31,6 +32,10 @@ var Core = (function () {
 				break;
 			case 'uapi.getCategories':
 				uAPI.getCategories(req.module, function (err, categories) {
+					if (err && err.message === 'not init'){
+						window.open(chrome.extension.getURL('pages/options.html'));
+					}
+					
 					cb({
 						err: err,
 						categories: categories
@@ -39,6 +44,10 @@ var Core = (function () {
 				break;
 			case 'uapi.createPost':
 				uAPI.createPost(req.module, req.data, function (err, data) {
+					if (err && err.message === 'not init'){
+						window.open(chrome.extension.getURL('pages/options.html'));
+					}
+					
 					cb({
 						err: err,
 						data: data
@@ -65,6 +74,12 @@ var Core = (function () {
 	}
 	
 	function init() {
+		
+		
+		
+		chrome.browserAction.onClicked.addListener(function(){
+			window.open(chrome.extension.getURL('pages/options.html'));
+		});
 		
 		chrome.storage.local.get('uapi_options', function (result) {
 			var options = result['uapi_options'];
