@@ -8,7 +8,8 @@ var uTranspiler = (function () {
 			var data = rawData.response.wall[0];
 			var newData = {};
 			newData.title = '';
-			newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>');
+			newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '$2');
+			//newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>');
 			
 			if (data.post_type === 'copy') {
 				newData.content = (data.copy_text ? data.copy_text + '<br>' : '') + newData.content;
