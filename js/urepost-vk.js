@@ -15,9 +15,10 @@ var uRepostVK = (function () {
 				
 				var $elPost = $(this).css({'position': 'relative'});
 				var idPost = $elPost.attr('id');
-				
-				$(elBtnTemplate01).appendTo($elPost.find('.post_image:first'))
+				var $icon = $(elBtnTemplate01);
+				$icon.appendTo($elPost.find('.post_image:first'))
 					.on('click.uRepostBtnClick', function () {
+						startLoading($icon);
 						async.parallel(
 							{
 								post: function (cb){
@@ -43,9 +44,10 @@ var uRepostVK = (function () {
 							function (err, results) {
 								if (err) {
 									console.log(err);
-									showErr();
+									showMessage('Возникла ошибка', 'error');
 									return;
 								}
+								endLoading($icon);
 								showPopup(results);
 							}
 						);
@@ -56,7 +58,7 @@ var uRepostVK = (function () {
 				$('.urepost-vk-btn', $(this)).off('.uRepostBtnClick').remove();
 			})
 			.on('click', '.js-urepost-modal-close', function () {
-				closePopup($(this).closest('.js-urepost-modal'));
+				closePopup();
 			})
 			.on('change', '.js-modules', function () {
 				var module = $(this).val();
@@ -64,13 +66,14 @@ var uRepostVK = (function () {
 				chrome.runtime.sendMessage({method: 'uapi.getCategories', module: module}, function (res) {
 					if (res.err) {
 						console.log(res.err);
-						showErr();
+						showMessage('Возникла ошибка', 'error');
 						return;
 					}
 					showCategories(res.categories);
 				});
 			})
 			.on('click', '.js-add-post', function () {
+				disableBtn();
 				var module = $('.js-modules').val();
 				var data = {};
 				var $popup = $('.js-urepost-modal');
@@ -80,10 +83,10 @@ var uRepostVK = (function () {
 				chrome.runtime.sendMessage({method: 'uapi.createPost', module: module, data: data}, function (res) {
 					if (res.err) {
 						console.log(res.err);
-						showErr();
+						showMessage('Возникла ошибка', 'error');
 						return;
 					}
-					closePopup($popup);
+					showMessage('Пост успешно отправлен', 'success');
 				});
 			});
 	};
@@ -93,7 +96,8 @@ var uRepostVK = (function () {
 		$('.js-modules', $modal).trigger('change');
 		$modal.fadeIn();
 	};
-	var closePopup = function ($popup) {
+	var closePopup = function () {
+		var $popup = $('.js-urepost-modal');
 		$popup.fadeOut(300, function () {
 			$popup.remove();
 		});
@@ -115,14 +119,23 @@ var uRepostVK = (function () {
 	var disableBtn = function () {
 		$('.js-add-post').attr('disabled', 'disabled');
 	};
-	var showErr = function (errText) {
-		var $err = $('<div class="urepost-err js-urepost-err">Возникла ошибка</div>');
-		$err.appendTo('.js-urepost-modal-content');
+	var showMessage = function (text, status) {
+		var $mess = $('<div class="urepost-modal-message urepost-modal-message--' + status + '">' + text + '</div>');
+		$mess.appendTo('.js-urepost-modal-content');
 		setTimeout(function () {
-			$err.fadeOut(300, function () {
-				$err.remove();
+			$mess.fadeOut(300, function () {
+				$mess.remove();
 			});
+			if (status === 'success') {
+				closePopup();
+			}
 		}, 1000);
+	};
+	var startLoading = function ($icon) {
+		$icon.addClass('urepost-vk-btn--loading');
+	};
+	var endLoading = function ($icon) {
+		$icon.removeClass('urepost-vk-btn--loading');
 	};
 	
 	return {
