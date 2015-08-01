@@ -1,4 +1,31 @@
 var Core = (function () {
+	var
+		MAX_HISTORY = 5;
+	
+	
+	function addHistory(err, data) {
+		chrome.storage.local.get('history', function (result) {
+			var
+				history = result['history'] || [],
+				post = {
+					_create: Date.now(),
+					title: data.title
+				};
+			
+			if (err) {
+				post.err = true
+			}
+			
+			if (history.length > MAX_HISTORY) {
+				history.shift();
+			}
+			
+			history.push(post);
+			chrome.storage.local.set({'history': history}, function () {
+				cb();
+			});
+		});
+	}
 	
 	
 	function onMessage(req, sender, cb) {
@@ -20,7 +47,7 @@ var Core = (function () {
 				break;
 			case 'uapi.getModules':
 				uAPI.getModules(function (err, modules) {
-					if (err && err.message === 'not init'){
+					if (err && err.message === 'not init') {
 						window.open(chrome.extension.getURL('pages/options.html'));
 					}
 					
@@ -32,7 +59,7 @@ var Core = (function () {
 				break;
 			case 'uapi.getCategories':
 				uAPI.getCategories(req.module, function (err, categories) {
-					if (err && err.message === 'not init'){
+					if (err && err.message === 'not init') {
 						window.open(chrome.extension.getURL('pages/options.html'));
 					}
 					
@@ -44,14 +71,26 @@ var Core = (function () {
 				break;
 			case 'uapi.createPost':
 				uAPI.createPost(req.module, req.data, function (err, data) {
-					if (err && err.message === 'not init'){
+					if (err && err.message === 'not init') {
 						window.open(chrome.extension.getURL('pages/options.html'));
 					}
+					
+					addHistory(err, data);
 					
 					cb({
 						err: err,
 						data: data
 					});
+				});
+				break;
+			case 'popup.getHistory':
+				chrome.storage.local.get('history', function (result) {
+					var history = result['history'];
+					cb({
+						err: null,
+						history: history
+					});
+					
 				});
 				break;
 			default :
@@ -76,8 +115,7 @@ var Core = (function () {
 	function init() {
 		
 		
-		
-		chrome.browserAction.onClicked.addListener(function(){
+		chrome.browserAction.onClicked.addListener(function () {
 			window.open(chrome.extension.getURL('pages/options.html'));
 		});
 		

@@ -1,12 +1,35 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>Информация</title>
+	<!--[BOOTSTRAP]-->
+	<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"/>
+	<!--[U-REPOST]-->
+	<link rel="stylesheet" href="/styles/css/popup.css">
 </head>
 <body>
-Test !!!
-<script>
-	console.log('!');
-</script>
+<!--<h1>Test !!!</h1>-->
+<div class="header">
+	<h4>uRepost история ...</h4>
+</div>
+
+
+<ul class="" data-history>
+	<li style="display: none" data-template>
+		<p data-date></p>
+		<p data-title></p>
+	</li>
+</ul>
+
+
+<!--LIB-->
+<script src="/lib/jquery-2.1.4.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script src="/lib/less.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<!--[U-REPOST]-->
+<script src="/pages/popup.js"></script>
+
 </body>
 </html>

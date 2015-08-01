@@ -67,7 +67,6 @@ var PageOptions = (function () {
 	function onStorage(changes) {
 		for (var key in changes) {
 			var storageChange = changes[key];
-			
 			switch (key) {
 				case "uapi_options" :
 					
@@ -81,8 +80,6 @@ var PageOptions = (function () {
 					}
 					break;
 			}
-			
-			console.log(storageChange);
 		}
 	}
 	

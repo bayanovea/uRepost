@@ -1,0 +1,12 @@
+body {
+	width: 400px;
+	height: 500px;
+	background-color: #eee;
+	border-radius: 10px;
+	margin: 0;
+	padding: 10px;
+}
+
+.header {
+	border-bottom: 1px solid #e5e5e5;
+}
