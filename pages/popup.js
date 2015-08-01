@@ -30,10 +30,11 @@ var Popup = (function () {
 		chrome.runtime.sendMessage({method: "popup.getHistory"}, function (res) {
 			if (res.err) return;
 			
+			if ( ! res.history.length) return;
 			$elHistory.empty();
 			
-			for (var post in res.history) {
-				addRepost(res.history[post]);
+			for (var i = res.history.length; i--;) {
+				addRepost(res.history[i]);
 			}
 		});
 	}
