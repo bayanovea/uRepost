@@ -26,10 +26,13 @@ var getVK = {
 				url: me.apiUrl + id + '&extended=1&access_token=' + token
 			})
 			.done(function (res) {
-				cb(uTranspiler(res, 'vk'));
+				if (res.error) {
+					return cb(new Error('vk get data error'), null);
+				}
+				cb(null, uTranspiler(res, 'vk'));
 			})
 			.fail(function () {
-				cb(null);
+				cb(new Error('error ajax request'), null);
 			});
 		});
 	}
