@@ -67,7 +67,6 @@ var PageOptions = (function () {
 	function onStorage(changes) {
 		for (var key in changes) {
 			var storageChange = changes[key];
-			
 			switch (key) {
 				case "uapi_options" :
 					
@@ -81,8 +80,6 @@ var PageOptions = (function () {
 					}
 					break;
 			}
-			
-			console.log(storageChange);
 		}
 	}
 	
@@ -103,6 +100,17 @@ var PageOptions = (function () {
 					var $elInput = $(this);
 					options[$elInput.attr('name')] = $elInput.val();
 				});
+				
+				if (options.mainUrl.indexOf('http://') !== 0 && options.mainUrl.indexOf('https://') !== 0) {
+					options.mainUrl = 'http://' + options.mainUrl;
+				}
+				if (options.mainUrl.slice(-1) === '/') {
+					options.mainUrl = options.mainUrl.slice(0, -1);
+				}
+				if ( ! /.*\/uapi$/.test(options.mainUrl)) {
+					options.mainUrl += '/uapi';
+				}
+				$('input[name="mainUrl"]', this).val(options.mainUrl);
 				
 				$(':submit', form).prop('disabled', true);
 				

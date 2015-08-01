@@ -1,0 +1,33 @@
+body {
+	width: 400px;
+	height: 500px;
+	background-color: #eee;
+	border-radius: 10px;
+	margin: 0;
+	padding: 10px;
+}
+
+.header {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 20px;
+}
+
+li {
+	margin: 5px 5px;
+	padding: 0;
+}
+
+.time {
+	float: right;
+	margin-left: 10px;
+}
+.title {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+} 

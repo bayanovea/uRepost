@@ -89,6 +89,7 @@ var uRepostVK = (function () {
 					if (res.err) {
 						console.log(res.err);
 						showMessage('Возникла ошибка', 'error');
+						enableBtn();
 						return;
 					}
 					showMessage('Пост успешно отправлен', 'success');
