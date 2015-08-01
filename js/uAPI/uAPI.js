@@ -119,7 +119,10 @@ var uAPI = (function () {
             data: (method === 'POST') ? parametrsForUrl : '',
         })
             .error(function (err) {
-                cb(err);
+                cb({
+                    err: err,
+                    ajax: true
+                });
             })
             .success(function (data) {
                 if (data.error) {
@@ -166,7 +169,7 @@ var uAPI = (function () {
             function (item, key, cb) {
                 // Делаем запрос по отдельному модулю
                 _request('/' + item.code + '/', 'get', parametrs, _options, function (err, data) {
-                    if (err) {
+                    if (err && err.ajax) {
                         return cb(err);
                     }
 
