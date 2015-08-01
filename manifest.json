@@ -3,7 +3,7 @@
 	
 	"name": "uRepost",
 	"description": "Публикация постов из Ваших любимых групп в соц. сетях прямо на сайт в системе uCoz.",
-	"version": "0.1",
+	"version": "1.0",
 	
 	"icons": {
 		"32" : "img/icons/32.png",

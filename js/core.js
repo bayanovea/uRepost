@@ -45,9 +45,9 @@ var Core = (function () {
 				});
 				break;
 			case 'uapi.validation':
-				uAPI.validateOptions(req.options,function(err){
+				uAPI.validateOptions(req.options, function (err) {
 					cb({
-						err: err						
+						err: err
 					});
 				});
 				break;
@@ -129,6 +129,17 @@ var Core = (function () {
 			var options = result['uapi_options'];
 			if (! options) return;
 			uAPI.init(options);
+		});
+		
+		
+		chrome.storage.local.get('show_options', function (result) {
+			var showOptions = result['show_options'];
+			if (! showOptions) {
+				window.open(chrome.extension.getURL('pages/options.html'));
+				chrome.storage.local.set({'show_options': true});
+			}
+			else {
+			}
 		});
 		
 		chrome.runtime.onMessage.addListener(onMessage);
