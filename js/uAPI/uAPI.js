@@ -170,7 +170,7 @@ var uAPI = (function () {
                 // Делаем запрос по отдельному модулю
                 _request('/' + item.code + '/', 'get', parametrs, _options, function (err, data) {
                     if (err && err.ajax) {
-                        return cb(err);
+                        return cb(err, data);
                     }
 
                     if (data.error && data.error.code) {
