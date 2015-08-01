@@ -1,6 +1,6 @@
 var Core = (function () {
 	var
-		MAX_HISTORY = 5;
+		MAX_HISTORY = 30;
 	
 	
 	function addHistory(err, data) {
@@ -75,7 +75,7 @@ var Core = (function () {
 						window.open(chrome.extension.getURL('pages/options.html'));
 					}
 					
-					addHistory(err, data);
+					addHistory(err, req.data);
 					
 					cb({
 						err: err,

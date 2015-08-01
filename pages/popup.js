@@ -6,12 +6,20 @@ var Popup = (function () {
 	
 	function addRepost(repost) {
 		var el = $(elTemplate).clone()[0];
+		var dt = new Date(repost._create);
+		var xx = function (n) {
+			return n < 10 ? '0' + n : n;
+		};
 		
-		$('[data-date]', el).html(new Date(repost._create).toTimeString());
+		$('[data-date]', el).html(xx(dt.getHours()) + ':' + ':' + xx(dt.getMinutes()));
 		$('[data-title]', el).html(repost.title);
 		
 		$elHistory.append(el);
-		$(el).show();
+		if (repost.err) {
+			$(el).show().find('[data-date]').addClass('label-danger');
+		} else {
+			$(el).show().find('[data-date]').addClass('label-success');
+		}
 	}
 	
 	function init() {
