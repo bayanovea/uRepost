@@ -54,7 +54,12 @@ var uAPI = (function () {
             ret = ret + encodeURIComponent(formdataArr[i].name) + "=" + encodeURIComponent(formdataArr[i].value) + "&";
         }
 
-        ret = ret.slice(0, -1);
+        ret = ret.slice(0, -1)
+            .replace(/\!/g, '%21')
+            .replace(/\~/g, '%7E')
+            .replace(/\'/g, '%27')
+            .replace(/\(/g, '%28')
+            .replace(/\)/g, '%29');
 
         return ret;
     }
@@ -83,8 +88,6 @@ var uAPI = (function () {
         //parametrs = parametrs.replace('@', '');
         basestring = http_build_query(parametrs).replace(/\+/g, '%20');
         basestring = method + '&' + encodeURIComponent(requestUrl) + '&' + encodeURIComponent(basestring);
-
-        console.log(basestring);
 
         hashKey = _options.consumerSecret + '&' + _options.oauthTokenSecret;
         oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
@@ -291,8 +294,8 @@ var test_uAPI = {
          });*/
         uAPI.createPost('blog', {
             category: "1",
-            title: 'Хgffпавпа',
-            content: ''
+            title: 'Хgffп!!!!авпа',
+            content: '111 <img class="emoji" alt="&#128564;" src="/images/emoji/D83DDE34.png"> 222'
         }, function(err, data) {
             console.log(err);
             console.log(data);
