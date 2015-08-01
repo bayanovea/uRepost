@@ -10,7 +10,7 @@ var uAPI = (function () {
         _isInit = false,
         // Глобальные настройки
         _options = {
-            oauthNonce:   CryptoJS.enc.Base64.stringify(CryptoJS.MD5(Date.now().toString())),
+            oauthNonce:   CryptoJS.enc.Base64.stringify(CryptoJS.MD5('123')),
             timestamp:    Math.floor(Date.now() / 1000),
             sigMethod:    'HMAC-SHA1',
             oauthVersion: '1.0'
@@ -59,31 +59,6 @@ var uAPI = (function () {
         return ret;
     }
 
-    function http_build_query_escape(formdata, numeric_prefix, arg_separator) {
-        var formdataArr = [],
-            ret = '';
-
-        for (var key in formdata) {
-            formdataArr.push({
-                name: key,
-                value: formdata[key]
-            });
-        }
-
-        formdataArr.sort(function(obj1, obj2) {
-            return obj1.name > obj2.name;
-        });
-
-        for(var i = 0; i < formdataArr.length; i++) {
-            ret = ret + escape(formdataArr[i].name) + "=" + escape(formdataArr[i].value) + "&";
-        }
-
-        ret = ret.slice(0, -1);
-
-        return ret;
-    }
-
-
     function init(options) {
         _isInit = true;
         _options = _.defaults(options, _options);
@@ -97,8 +72,7 @@ var uAPI = (function () {
         var
             requestUrl = _options.mainUrl + requestUrl.toLowerCase(),
             method = method.toUpperCase(),
-            parametrsForUrl = http_build_query_escape(parametrs),
-            parametrsForUrl2 = http_build_query(parametrs),
+            parametrsForUrl = http_build_query(parametrs),
         //parametrs2 = parametrs,
             basestring = '',
             hashKey = '',
@@ -117,12 +91,13 @@ var uAPI = (function () {
         $url_for = $request_url.'?'.$parametrs_forurl.'&oauth_signature='.$oauth_signature;*/
 
         //parametrs = parametrs.replace('@', '');
-        basestring = method + '&' + encodeURIComponent(requestUrl) + '&' +
-            encodeURIComponent(parametrsForUrl.replace('+', '%20'));
+        basestring = http_build_query(parametrs).replace(/\+/g, '%20');
+        basestring = method + '&' + encodeURIComponent(requestUrl) + '&' + encodeURIComponent(basestring);
+
+        console.log(basestring);
 
         hashKey = _options.consumerSecret + '&' + _options.oauthTokenSecret;
         oauthSignature = encodeURIComponent($.trim(CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA1(basestring, hashKey))));
-
 
         url = (method === 'GET' || method === 'DELETE')
             ? requestUrl + '?' + parametrsForUrl + '&oauth_signature=' + oauthSignature
@@ -131,7 +106,7 @@ var uAPI = (function () {
         $.ajax({
             method: method,
             url: url,
-            data: (method === 'POST') ? parametrsForUrl2 : '',
+            data: (method === 'POST') ? parametrsForUrl : '',
         }).error(function (err) {
             cb(err);
         }).success(function (data) {
@@ -271,7 +246,7 @@ var uAPI = (function () {
 
             parametrs = _.defaults(parametrs, __parametrs);
 
-            _request('/' + module +  '/', 'POST', parametrs, _options, function (err, data) {
+            _request('/' + module + '/', 'POST', parametrs, _options, function (err, data) {
                 if (err) {
                     return cb(err);
                 }
@@ -326,8 +301,8 @@ var test_uAPI = {
          });*/
         uAPI.createPost('blog', {
             category: "1",
-            title: 'fsdf!!!',
-            content: "cont!"
+            title: 'Хgffпавпа',
+            content: ''
         }, function(err, data) {
             console.log(err);
             console.log(data);
