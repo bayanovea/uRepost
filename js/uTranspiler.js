@@ -10,7 +10,8 @@ var uTranspiler = (function () {
 			newData.title = '';
 			//newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '$2');
 			newData.content = data.text
-				.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>')
+				.replace(/\[(.*?)\|(.*?)\]/gi, '$2')
+				//.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>')
 				.replace(/\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]/g, '')
 				.replace(/(<img.*?class="emoji.*?>)/g, function (img) {
 					return img.replace(/src="/, 'src="https://vk.com');
