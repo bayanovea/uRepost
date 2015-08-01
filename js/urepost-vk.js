@@ -10,6 +10,9 @@ var uRepostVK = (function () {
 	var addListeners = function () {
 		$(document)
 			.on('mouseenter', 'div.post', function () {
+				
+				if ($(this).height() < 120) return;
+				
 				var $elPost = $(this).css({'position': 'relative'});
 				var idPost = $elPost.attr('id');
 				
@@ -40,6 +43,7 @@ var uRepostVK = (function () {
 							function (err, results) {
 								if (err) {
 									console.log(err);
+									showErr();
 									return;
 								}
 								showPopup(results);
@@ -60,6 +64,7 @@ var uRepostVK = (function () {
 				chrome.runtime.sendMessage({method: 'uapi.getCategories', module: module}, function (res) {
 					if (res.err) {
 						console.log(res.err);
+						showErr();
 						return;
 					}
 					showCategories(res.categories);
@@ -75,6 +80,7 @@ var uRepostVK = (function () {
 				chrome.runtime.sendMessage({method: 'uapi.createPost', module: module, data: data}, function (res) {
 					if (res.err) {
 						console.log(res.err);
+						showErr();
 						return;
 					}
 					closePopup($popup);
@@ -108,6 +114,15 @@ var uRepostVK = (function () {
 	};
 	var disableBtn = function () {
 		$('.js-add-post').attr('disabled', 'disabled');
+	};
+	var showErr = function (errText) {
+		var $err = $('<div class="urepost-err js-urepost-err">Возникла ошибка</div>');
+		$err.appendTo('.js-urepost-modal-content');
+		setTimeout(function () {
+			$err.fadeOut(300, function () {
+				$err.remove();
+			});
+		}, 1000);
 	};
 	
 	return {
