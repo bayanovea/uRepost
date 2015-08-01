@@ -93,12 +93,21 @@ var uRepostVK = (function () {
 		});
 	};
 	var showCategories = function (categories) {
+		if ( ! categories.length) {
+			return disableBtn();
+		}
 		var options = '';
 		categories.forEach(function (category) {
 			options += '<option value="' + category.id + '">' + category.name + '</option>';
 		});
 		$('.js-categories').html(options).removeAttr('disabled');
+		enableBtn();
+	};
+	var enableBtn = function () {
 		$('.js-add-post').removeAttr('disabled');
+	};
+	var disableBtn = function () {
+		$('.js-add-post').attr('disabled', 'disabled');
 	};
 	
 	return {
