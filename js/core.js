@@ -46,7 +46,9 @@ var Core = (function () {
 				break;
 			case 'uapi.validation':
 				uAPI.validateOptions(req.options,function(err){
-					cb(err);
+					cb({
+						err: err						
+					});
 				});
 				break;
 			case 'uapi.getModules':

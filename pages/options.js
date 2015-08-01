@@ -2,7 +2,9 @@ var PageOptions = (function () {
 	var
 		resource = {
 			vkOnline: 'ВК подключен',
-			vkOffline: 'Подключить ВК'
+			vkOffline: 'Подключить ВК',
+			INVALID_CONSUMER_KEY : 'Некорректный consumer key',
+			UNKNOWN_TOKEN : 'Неизвестный token'
 		};
 	
 	function fillUApiOptions(cb) {
@@ -21,11 +23,22 @@ var PageOptions = (function () {
 	}
 	
 	function validationUApiOption(options, cb) {
+		return cb(null);
+		
+		//TODO:
 		chrome.runtime.sendMessage({method: 'uapi.validation', options: options}, function (res) {
 			if (res.err) {
-				return cb(err);
+				switch (res.err.code){
+					case 'INVALID_CONSUMER_KEY':
+						cb(resource.INVALID_CONSUMER_KEY);
+						return;
+					case 'UNKNOWN_TOKEN':
+						cb(resource.UNKNOWN_TOKEN);
+						return;
+				}
+				return cb('Неизвестная ошибка');
 			}
-			cb(null);
+			return cb(null);
 		});
 	}
 	
@@ -113,6 +126,8 @@ var PageOptions = (function () {
 				$(':submit', form).prop('disabled', true);
 				
 				validationUApiOption(options, function (err) {
+					$(':submit', form).removeAttr('disabled');
+
 					if (err) {
 						$('[data-uapi-error]').show().html(err);
 						console.log(err);
@@ -121,7 +136,6 @@ var PageOptions = (function () {
 					$('[data-uapi-error]').hide();
 					
 					saveUApiOptions(options, function () {
-						$(':submit', form).removeAttr('disabled');
 					});
 				});
 				
