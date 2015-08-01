@@ -8,7 +8,8 @@ var uTranspiler = (function () {
 			var data = rawData.response.wall[0];
 			var newData = {};
 			newData.title = '';
-			newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>');
+			newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '$2');
+			//newData.content = data.text.replace(/\[(.*?)\|(.*?)\]/gi, '<a href="https://vk.com/$1" target="_blank>$2</a>');
 			
 			if (data.post_type === 'copy') {
 				newData.content = (data.copy_text ? data.copy_text + '<br>' : '') + newData.content;
@@ -20,13 +21,13 @@ var uTranspiler = (function () {
 				poster = rawData.response.groups.filter(function (group) {
 					return posterId === group.gid;
 				})[0];
-				newData.title = poster ? ('Репост «' + poster.name + '»') : '';
+				newData.title = poster ? ('Репост ' + poster.name + '') : '';
 			}
 			else {
 				poster = rawData.response.profiles.filter(function (profile) {
 					return posterId === profile.uid;
 				})[0];
-				newData.title = poster ? ('Репост «' + poster.first_name + ' ' + poster.last_name + '»') : '';
+				newData.title = poster ? ('Репост ' + poster.first_name + ' ' + poster.last_name + '') : '';
 			}
 			
 			if (data.attachments) {
