@@ -22,7 +22,7 @@ var Core = (function () {
 			
 			history.push(post);
 			chrome.storage.local.set({'history': history}, function () {
-				cb();
+				cb && cb();
 			});
 		});
 	}

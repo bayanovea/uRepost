@@ -48,7 +48,7 @@ var uRepostVK = (function () {
 								endLoading($icon);
 								if (err) {
 									console.log(err);
-									showMessage('Возникла ошибка', 'error');
+									showMessage('Возникла ошибка: ' + (err.message || 'UNKNOWN'), 'error');
 									return;
 								}
 								showPopup(results);
@@ -128,7 +128,7 @@ var uRepostVK = (function () {
 	var showMessage = function (text, status) {
 		var $modal = $('.js-urepost-modal-content');
 		if ( ! $modal.length) {
-			return alert(text);
+			return console.error(text);
 		}
 		var $mess = $('<div class="urepost-modal-message urepost-modal-message--' + status + '">' + text + '</div>');
 		$mess.appendTo($modal);
