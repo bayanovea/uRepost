@@ -3,7 +3,7 @@
 	
 	"name": "uRepost",
 	"description": "Публикация постов из Ваших любимых групп в соц. сетях прямо на сайт в системе uCoz.",
-	"version": "1.0",
+	"version": "1.1.1",
 	
 	"icons": {
 		"32" : "img/icons/32.png",
@@ -15,18 +15,17 @@
 	"background": {
 		"persistent": false,
 		"scripts": [
-			//LIB
 			"lib/jquery-2.1.4.min.js",
 			"lib/lodash.min.js",
 			"lib/async.min.js",
 			"lib/hmac-sha1.js",
 			"lib/md5.js",
-			//SRC
+			
 			"js/getSocialData/vk.js", 
 			"js/authSocial/vk.js",
 			"js/uTranspiler.js",
 			"js/uAPI/uAPI.js",
-			//CORE
+			
 			"js/core.js" 
 		]
 	},
